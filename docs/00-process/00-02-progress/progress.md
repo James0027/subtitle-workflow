@@ -17,4 +17,6 @@
 - 下一步：用户评审独立步骤交互稿，按反馈调整；主子PRD与真实开发尚未开始。
 - 无真实媒体读取/上传/ASR/存储/生成/签发/发布；无依赖安装、付费或产品部署；Git版本存档按本轮用户授权单独记录。
 
-- GitHub存档：私有仓库 https://github.com/James0027/subtitle-workflow 已创建并核实private；本地Git已初始化，当前待提交推送。未邀请他人，未启用Pages。
+- GitHub存档：私有仓库 https://github.com/James0027/subtitle-workflow 已创建并核实private；当前V3、设计文档与框架已提交并推送main，远端SHA与本地源版本一致。未邀请他人，未启用Pages。
+
+- 访问核验：Private，无其他协作者、无待处理邀请、Pages关闭；本轮只做私有版本存档，不代表产品上线。
