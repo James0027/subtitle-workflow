@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>02 任务单 · 字幕协作台原型</title><link rel="stylesheet" href="wireframe.css"><script src="wireframe.js" defer></script></head>
+<body data-step="2"><header id="siteHeader"></header><div class="app-layout"><aside id="stepNav"></aside><main>
+<div class="page-head"><div><p class="eyebrow">02 / 素材入库 · 任务负责人</p><h1>明确要做什么，再判断能否开工</h1><p class="muted">《示例短剧》EP01 · MEDIA-DEMO-001 · 表单均为只读设计示例，不会保存任务。</p></div><span class="tag tag-warn">任务草稿</span></div>
+<div class="callout">本页展示两种任务及缺项反馈。目标语言地区、发行市场、受众和平台规范分别确认；不能把“英语”直接当成“美国市场”。</div>
+<section class="panel" id="source-task"><div class="panel-head"><h2>A · 任务基本要求</h2><span class="tag tag-neutral">源语任务示例</span></div>
+<div class="field-grid">
+<label class="field">任务单<input value="JOB-DEMO-001 · 草稿修订 1" readonly></label><label class="field">任务类型<input value="仅源语处理（source_only）" readonly></label>
+<label class="field">用途<input value="生成源语字幕，供内部审核与后续翻译使用" readonly></label><label class="field">任务负责人<input value="源字幕负责人（示例角色）" readonly></label>
+<label class="field">源语言及地区<input value="中文 · zh-CN（由任务负责人确认）" readonly></label><label class="field">处理路线<input value="从零转写；若已有字幕可改为核对 / 对齐" readonly></label>
+<label class="field">选用声音<input value="当前母版视频声音 · 提取后另存" readonly></label><label class="field">处理范围<input value="指定片段 · 00:00—01:00（范围示例）" readonly></label>
+<label class="field">输出格式<input value="SRT · 供内部审核，非平台交付验收" readonly></label><label class="field">目标版本范围<input value="不适用：当前仅处理源语字幕" readonly></label>
+</div>
+<p class="side-note">范围必须由实际母版时长校验，不可越界；源语言与识别结果不符时反馈给人，不静默替换。真实语言、范围与首批市场尚待项目确认。</p>
+<div class="form-actions"><a class="button primary" href="#source-ready">确认源语任务并检查开工条件</a><a class="button secondary" href="#multilingual">查看完整多语任务</a></div>
+</section>
+<section class="panel" id="source-ready"><div class="panel-head"><h2>B · 源语任务确认摘要</h2><span class="tag tag-ok">源语阶段 READY · 示例</span></div>
+<div class="grid-two"><div><h3>这次交接给 ASR 的内容</h3><ul class="check-list"><li>母版：MEDIA-DEMO-001，确认记录齐备</li><li>任务：JOB-DEMO-001 · 修订 1</li><li>声音：母版声音；实际提取与可用性检查是处理前置动作</li><li>范围：00:00—01:00；源语：zh-CN</li><li>输入附件：无已有字幕；脚本待补已登记</li><li>输出：可审核源语字幕候选及过程记录</li></ul></div>
+<div><h3>阶段检查反馈</h3><p><span class="tag tag-ok">母版 / 任务条件确认</span></p><p><span class="tag tag-neutral">目标语 / 市场：显式不适用</span></p><p><span class="tag tag-warn">调用前仍需权限 / 预算检查</span></p><p class="muted">READY 表示本阶段资料满足；不代表收费调用获批，也不代表全局多语任务已经就绪。</p></div></div>
+<div class="form-actions"><a class="button primary" href="03-processing.html">查看下一步：ASR 处理页</a><a class="button secondary" href="#source-task">修改要求（需重新确认）</a></div>
+</section>
+<section class="panel" id="multilingual"><div class="panel-head"><h2>C · 完整多语任务：还需要明确什么？</h2><span class="tag tag-warn">NEEDS_INPUT · 示例</span></div>
+<p>以下是另一种任务范围示例，并非已确定的首批市场。源语任务不会因为目标条件留空而被系统猜成多语任务。</p>
+<div class="field-grid">
+<label class="field">任务类型<input value="完整多语种交付（multilingual）" readonly></label><label class="field">目标语言地区<input value="英语 · en-US（示例）" readonly></label>
+<label class="field">发行市场<input value="US（示例，独立于语言选择）" readonly></label><label class="field">目标受众<input value="待任务负责人确认年龄组 / 观看场景" readonly></label>
+<label class="field">适用评级<input value="待确认 · 不由模型推定" readonly></label><label class="field">目标平台 / 输出规范<input value="待选择平台 profile 及有效版本" readonly></label>
+<label class="field">市场规则包<input value="待规则负责人确认来源 / 版本 / 适用范围" readonly></label><label class="field">交付范围与格式<input value="本集 00:00—01:00 · SRT（示例）" readonly></label>
+<label class="field">交接责任<input value="翻译负责人 / 审校人 / 签发人待分配" readonly></label><label class="field">预期交付时间<input value="未约定（需明确时再记录，不预填完成时间）" readonly></label>
+</div>
+<div class="table-wrap"><table><thead><tr><th>模块安排</th><th>任务单需要表达的判断</th></tr></thead><tbody><tr><td>ASR / 对齐</td><td>本例从零转写；已有字幕改走核对 / 对齐路线</td></tr><tr><td>翻译、文化、单位、口语、合规</td><td>逐项记录必须 / 不适用 / 暂缓及理由；未知不能当作“不适用”</td></tr></tbody></table></div>
+<div class="form-actions"><a class="button primary" href="#missing">确认多语任务（查看缺项反馈）</a><a class="button secondary" href="#completed-multilingual">查看资料齐全时的摘要</a></div>
+</section>
+<section class="panel warning" id="missing"><div class="panel-head"><h2>缺项反馈 · 完整多语任务暂不可开工</h2><span class="tag tag-danger">TASK_INCOMPLETE</span></div>
+<div class="table-wrap"><table><thead><tr><th>缺项</th><th>影响</th><th>交给谁</th></tr></thead><tbody><tr><td>受众 / 评级</td><td>无法确定文化与合规判断范围</td><td>任务负责人明确并确认</td></tr><tr><td>平台 profile / 市场规则有效版本</td><td>不能按未知规范检查或签发</td><td>规则负责人提供适用版本</td></tr><tr><td>审核与签发责任</td><td>交接和权限未明确</td><td>项目负责人分配角色</td></tr></tbody></table></div>
+<p>保留草稿和缺项责任，不自动用通用默认值填满。可补齐后重新检查；也可经授权另建源语子任务，先完成已明确的源语范围。</p><div class="form-actions"><a class="button secondary" href="#multilingual">返回补齐任务要求</a><a class="button secondary" href="#child-task">查看“仅先做源语”</a></div></section>
+<section class="panel" id="child-task"><div class="panel-head"><h2>人工选择 · 先启动源语子任务</h2><span class="tag tag-neutral">等待负责人授权</span></div><p>原多语任务保留 NEEDS_INPUT。另建 source_only 子任务，关联原任务，明确仅处理源语的用途、范围、输出和责任。</p><p>子任务确认并通过本阶段检查后才能交接；不能把原多语任务整体改成 READY，也不自动开展翻译。</p><a class="button secondary" href="#source-task">查看源语子任务表单样式</a></section>
+<section class="panel success" id="completed-multilingual"><div class="panel-head"><h2>资料齐全时 · 完整多语任务摘要</h2><span class="tag tag-ok">另一状态示例</span></div>
+<p><strong>《示例短剧》EP01 → en-US · US · 指定受众与评级 · 指定平台规范版本</strong></p><p>这里表示真实任务已由负责人选定并确认了受众、评级、规则包、平台规范、交付项及责任人后的界面形态；不提供或声称现有有效规则版本。实际选择未知时继续显示待补，不能使用本摘要占位放行。</p>
+<div class="flow-mini">母版已确认 → 任务要求已确认 → 对应阶段条件通过 → 进入 ASR / 对齐</div><p class="muted">修改语言、市场、范围、母版或输出要求后，原确认不沿用；需保留修订、重新判断受影响阶段。</p><a class="button secondary" href="03-processing.html">查看处理页布局</a></section>
+<section class="annotation"><h2>本页动作简注</h2><p><strong>输入：</strong>确认母版 + 人明确的用途 / 要求 → <strong>判断：</strong>代码检查缺项、版本和阶段条件；人负责用途、受众及责任 → <strong>输出：</strong>已确认任务单及开工检查结果。</p><p>BRD F-01 / F-09 / F-10 · RULE-INT-003 / 004、RULE-SUB-003。关联 MET-INT-001：统计批次内阶段条件确认任务数 ÷ 请求开工任务数；重试不新增任务分母，源语 / 多语分开。没有真实任务数据时不展示达成率。</p></section>
+</main></div></body></html>

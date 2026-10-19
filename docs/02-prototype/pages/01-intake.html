@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>01 素材入库 · 字幕协作台原型</title><link rel="stylesheet" href="wireframe.css"><script src="wireframe.js" defer></script></head>
+<body data-step="1">
+<header id="siteHeader"></header>
+<div class="app-layout"><aside id="stepNav"></aside><main>
+<div class="page-head"><div><p class="eyebrow">01 / 素材入库 · 媒资工程</p><h1>收齐材料，确认这次使用的母版</h1><p class="muted">《示例短剧》EP01 · 设计示例；文件、检查及确认记录均为构造数据。</p></div><span class="tag tag-warn">待确认母版</span></div>
+<div class="callout">这是逐状态交互稿：按钮跳到对应状态示例，不会真实上传、读取或检测文件。素材登记后仍需核对母版、确认任务单，才能判断是否开工。</div>
+<section class="panel" id="receive">
+<div class="panel-head"><h2>A · 接收素材包</h2><span class="tag tag-neutral">状态 1：尚未登记</span></div>
+<div class="field-grid">
+<label class="field">作品<input value="示例短剧" readonly></label><label class="field">集数<input value="EP01" readonly></label>
+<label class="field">提供方标注版本<input value="剪辑 v1（示例）" readonly></label><label class="field">来源与使用权限<input value="示例授权记录 RIGHTS-DEMO-001 · 待媒资核实" readonly></label>
+</div>
+<div class="state-card"><h3>视频及配套文件</h3><div class="upload-zone"><strong>将本集视频和配套文件放在这里</strong><p class="muted">视频 / 独立音轨 / 已有字幕 / 脚本；选择文件控件仅示意。</p><button type="button" disabled>选择文件（原型占位）</button></div><p>可接收视频、独立音轨、已有字幕、脚本，也可补充角色表和术语表。</p><p class="muted">可将多个文件归到同一集；仅有文档不构成可转写素材。当前页面不提供真实文件选择器。</p><a class="button secondary" href="#registered">查看“选择文件并登记”后的状态</a></div>
+<p class="side-note">无独立音轨时，可以使用视频中的声音；字幕、脚本缺失分别登记，不一律阻断。</p>
+</section>
+<section class="panel" id="registered">
+<div class="panel-head"><h2>B · 材料清单与检查结果</h2><span class="tag tag-neutral">状态 2：已登记，待核对</span></div>
+<div class="table-wrap"><table><thead><tr><th>素材 / 版本</th><th>用途</th><th>示例检查反馈</th><th>下一步</th></tr></thead><tbody>
+<tr><td>EP01_cut_v1.mp4<br><span class="muted">视频 · 原件</span></td><td>候选母版 / 声音来源</td><td><span class="tag tag-ok">示例：可读取、有声音</span><br>片名、剪辑与声音仍需人核对</td><td><a href="#master">核对并选作母版</a></td></tr>
+<tr><td>独立音轨</td><td>可选声音来源</td><td><span class="tag tag-neutral">未提供</span></td><td>登记从视频提取的声音路线</td></tr>
+<tr><td>已有字幕</td><td>核对 / 对齐参考</td><td><span class="tag tag-neutral">未提供</span></td><td>任务单可选择从零转写</td></tr>
+<tr><td>脚本</td><td>剧情 / 专名参考</td><td><span class="tag tag-warn">待补充</span></td><td>补充责任：素材提供方；不单独阻断 ASR</td></tr>
+</tbody></table></div>
+<div class="form-actions"><a class="button primary" href="#master">进入母版核对</a><a class="button secondary" href="#failure">查看文件异常状态</a></div>
+<details class="annotation"><summary>登记后，系统应保存什么？</summary><p>登记素材清单、原件校验值、来源授权引用及可读性检查；保留原件。尚未核定的附件不强行绑定母版，重复文件提示复用，不当成新的剧情样本。这里未执行任何真实检查。</p></details>
+</section>
+<section class="panel" id="master">
+<div class="panel-head"><h2>C · 核对并确认母版</h2><span class="tag tag-warn">状态 3：人工核对</span></div>
+<div class="grid-two"><div>
+<div class="subtitle-preview"><p>视频预览区</p><strong>《示例短剧》EP01 · 剪辑 v1</strong><p class="muted">设计占位，无真实视频播放。</p></div>
+<div class="field-grid"><label class="field">母版视频<input value="EP01_cut_v1.mp4" readonly></label><label class="field">本次声音来源<input value="从该视频提取 · 派生另存" readonly></label></div>
+</div><div><h3>确认清单（已核对状态示例）</h3><ul class="check-list">
+<li>✓ 作品与集数对应，片头 / 片尾与剪辑版本已核对</li><li>✓ 时长与帧率 / 时间基准已有检测记录</li><li>✓ 声音与画面对应，并完成可用性回听</li><li>✓ 附件缺失已登记；无错误挂接的其他集素材</li><li>✓ 授权引用已核实，外部处理权限另行检查</li>
+</ul><p class="muted">上述为确认完成时的界面示例，不能当作当前真实素材的检查结论。</p><div class="form-actions"><a class="button primary" href="#confirmed">确认母版（查看结果）</a><a class="button secondary" href="#mismatch">版本不一致，退回核对</a></div></div></div>
+</section>
+<section class="panel success" id="confirmed">
+<div class="panel-head"><h2>确认结果 · 母版已确认</h2><span class="tag tag-ok">CONFIRMED · 示例</span></div>
+<p><strong>MEDIA-DEMO-001</strong> · 《示例短剧》EP01 · 剪辑 v1</p><p>确认人：媒资操作员（示例角色） · 声音：来自当前视频 · 附件：暂无字幕、脚本待补。</p>
+<div class="callout">母版已经确定；还没有确认“要做什么”的任务单。当前不能直接开始 ASR。</div>
+<div class="form-actions"><a class="button primary" href="02-task.html">下一页：填写并确认任务单</a><a class="button secondary" href="#master">返回核对状态</a></div>
+</section>
+<section class="panel danger" id="failure"><div class="panel-head"><h2>异常状态 · 文件不可读 / 无可用声音</h2><span class="tag tag-danger">需要补料</span></div><p>保留已收到的材料和检查原因，不显示“检查通过”。无可用声音时，不能启动从零 ASR。</p><div class="table-wrap"><table><thead><tr><th>反馈</th><th>处理人及操作</th><th>结果</th></tr></thead><tbody><tr><td>视频损坏，无法读取</td><td>素材提供方重新提供文件</td><td>新文件重新检查；保留旧检查记录</td></tr><tr><td>视频可读，但没有可用声音</td><td>提供对应净音轨，或转交人工确认可行路线</td><td>本识别路线阻断；不生成“成功空字幕”</td></tr></tbody></table></div><a class="button secondary" href="#receive">查看重新补交入口</a></section>
+<section class="panel warning" id="mismatch"><div class="panel-head"><h2>异常状态 · 音轨 / 剪辑版本不一致</h2><span class="tag tag-warn">待人工核对</span></div><p>例如音轨属于另一版剪辑，不能因为文件名相近就自动关联。媒资核对对应版本、替换或重新选择声音。</p><p>若确认换了母版，建立新的母版标识并关联旧版；已有任务及下游结果需重新检查，不覆盖旧对象。</p><a class="button secondary" href="#master">返回母版核对</a></section>
+<section class="annotation"><h2>本页动作简注</h2><p><strong>输入：</strong>视频及配套文件 → <strong>判断：</strong>代码检查可读性 / 元数据，人核对内容、授权与版本 → <strong>输出：</strong>素材清单、检查记录、已确认母版；任务单在下一页完成。</p><p>BRD F-01 / F-10 · RULE-INT-001 / 002；母版与任务单共同构成入库产出。MET-INT-001 的分母是请求开工任务，不能把上传成功数当作就绪完整率。</p></section>
+</main></div></body></html>

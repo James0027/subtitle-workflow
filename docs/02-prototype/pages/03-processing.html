@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>03 转写与对齐 · 字幕原型</title><link rel="stylesheet" href="wireframe.css"></head>
+<body data-step="3"><header id="siteHeader"></header><div class="app-layout"><aside id="stepNav"></aside><main>
+<div class="page-head"><p class="eyebrow">03 / 转写与对齐 · 首批范围</p><h1>查看源字幕处理进度</h1><p class="muted">操作人：任务负责人。处理前已确认母版和任务单；本页是独立状态稿，各状态是不同情况，不代表同一任务同时发生。</p></div>
+<section class="panel"><div class="panel-head"><h2>A · 本次输入</h2><span class="tag tag-ok">开工条件已确认 · 状态示例</span></div>
+<div class="field-grid"><div class="field"><b>作品 / 母版</b><p>《示例短剧》EP01<br>MEDIA-DEMO-001 · 母版 v1</p></div><div class="field"><b>任务单</b><p>JOB-DEMO-001 · 修订 1<br>源语字幕任务 · zh-CN</p></div><div class="field"><b>范围 / 声音</b><p>00:00—01:00<br>母版指定声音 · 可用性已确认</p></div><div class="field"><b>交接目标</b><p>源语文字与时间轴候选<br>交人工回听审阅，尚非终稿</p></div></div>
+<p class="side-note">不因“上传完成”自动开工。实际启动还须有已批准的工具、预算及计次配置；此处假设就绪以展示处理界面，不表示这些参数已经配置。</p>
+<div class="form-actions"><a class="button secondary" href="02-task.html">返回任务单</a><a class="button primary" href="#running">查看开始后的状态</a></div></section>
+<section class="panel"><h2>B · 按任务单选择处理路线</h2><div class="grid-two"><div class="state-card"><span class="tag tag-neutral">路线一 · 新转写</span><h3>没有可用源字幕</h3><p>声音 → ASR 识别 → 片段整理 / 对齐 → 候选。</p><a href="#running">查看处理稿 →</a></div><div class="state-card"><span class="tag tag-neutral">路线二 · 已有字幕</span><h3>核对与对齐</h3><p>声音 + 已有字幕 → 核对 / 对齐 → 差异候选。保留原字幕，不强制全量重做 ASR。</p><a href="#existing">查看已有字幕结果 →</a></div></div></section>
+<section class="panel" id="running"><div class="panel-head"><h2>C · 处理中</h2><span class="tag tag-warn">IN_PROGRESS</span></div>
+<p>运行：RUN-DEMO-001 · 当前尝试记录可查看；不使用虚构百分比表示识别进度。</p>
+<div class="table-wrap"><table><thead><tr><th>处理步骤</th><th>状态</th><th>可查看内容</th></tr></thead><tbody>
+<tr><td>读取母版、范围及输入版本</td><td><span class="tag tag-ok">完成</span></td><td>母版 v1 / 任务单修订 1</td></tr>
+<tr><td>准备指定声音与输入检查</td><td><span class="tag tag-ok">完成</span></td><td>所选音源及检查记录</td></tr>
+<tr><td>识别文字</td><td><span class="tag tag-warn">处理中</span></td><td>已返回部分片段仅作中间产物</td></tr>
+<tr><td>整理分段、时间轴并核对</td><td><span class="tag tag-neutral">尚未执行</span></td><td>不能把未执行显示为通过</td></tr>
+<tr><td>保存候选并交人工审阅</td><td><span class="tag tag-neutral">尚未执行</span></td><td>不会直接写入人工确认稿</td></tr></tbody></table></div>
+<details><summary>查看输入 → 处理 → 记录变化</summary><p>读取指定声音和任务修订；识别能力生成文字，工程整理分段与时间轴，人工判断声音含义和疑点。保存运行步骤、尝试、版本及中间产物；成功后另存候选和问题记录。切片大小是研发实现选择，不在原型写死。</p></details>
+<div class="form-actions"><a class="button secondary" href="#success">查看成功结果</a><a class="button secondary" href="#failed">查看失败状态</a><a class="button secondary" href="#stopped">查看停止状态</a></div></section>
+<section class="panel success" id="success"><div class="panel-head"><h2>D · 候选已生成，等待人工</h2><span class="tag tag-ok">WAITING_REVIEW</span></div><p>已产出：源语文字与时间轴候选、疑点列表、输入版本及运行记录。尚未产出：人工确认源字幕。</p>
+<div class="table-wrap"><table><thead><tr><th>片段</th><th>时间</th><th>候选文字（构造示例）</th><th>复核提示</th></tr></thead><tbody><tr><td>S001</td><td>00:03.000—00:05.000</td><td>你真的决定了吗？</td><td>待回听</td></tr><tr><td>S002</td><td>00:06.000—00:08.000</td><td>我没有答应他。</td><td>声音不清，必审；未提供有效校准分</td></tr></tbody></table></div>
+<a class="button primary" href="04-source-review.html">打开源字幕审阅稿 →</a></section>
+<section class="panel" id="existing"><h2>E · 已有字幕核对结果</h2><p><span class="tag tag-warn">差异待审</span> 输入：原字幕 v1 + 指定声音。结果：保留原稿，另列文字差异和时间调整候选。</p><div class="table-wrap"><table><thead><tr><th>片段</th><th>原稿</th><th>新候选</th><th>交接</th></tr></thead><tbody><tr><td>S002</td><td>我答应他。</td><td>我没有答应他。</td><td>否定含义不同 → 必须回听确认</td></tr></tbody></table></div><p class="annotation">这里只显示差异，不据模型意见自动改写原字幕。任务需改路线时回任务单修订并重新检查。</p><a class="button secondary" href="04-source-review.html">查看差异审阅 →</a></section>
+<section class="grid-two"><div class="panel danger" id="failed"><h2>F · 识别失败</h2><span class="tag tag-danger">FAILED · 服务未返回可用结果</span><p>保留输入、错误原因、已有中间产物和尝试记录。后续对齐、候选审阅标为“未执行”；空候选不是成功。</p><p><b>处理人：</b>任务负责人联系工程排查依赖；声音不可用时联系素材提供者补音轨或安排人工听打。</p><a class="button secondary" href="02-task.html">查看返回任务单</a></div>
+<div class="panel warning" id="stopped"><h2>G · 自动调用已停止</h2><span class="tag tag-danger">停止原因：达到重试停止条件</span><p>停止继续调用，保留已有产物。预算超限也进入停止分支；预算未配置时付费自动路线不得启动。</p><p><b>恢复人：</b>任务负责人核实原因及批准配置后决定重新授权或转人工；新授权留痕，不清空旧失败与成本。不显示“一键无限重试”。</p><a class="button secondary" href="#running">返回处理状态稿</a></div></section>
+<footer class="annotation"><b>设计依据：</b>BRD F-02 / F-08 / F-10；RULE-ASR-001—004、RULE-SUB-001/004、RULE-GOV-001。<br>采集说明：本批受理运行保留成功/失败/停止计数，重试不算新业务样本。MET-OPS-001 重试停止合规＝触及停止条件且未继续执行的运行数 / 触及停止条件的运行数；同报违规继续次数。ASR 质量需有金标才能计算；本页没有实测值，课件数值未启用。</footer>
+</main></div><script src="wireframe.js"></script></body></html>

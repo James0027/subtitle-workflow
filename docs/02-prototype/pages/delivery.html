@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>检查与导出 · 字幕原型</title><link rel="stylesheet" href="proto.css"></head>
+<body data-page="delivery"><div id="chrome"></div><div class="shell"><aside id="sidebar"></aside><main>
+<div class="page-head"><div><h1>检查与源字幕导出</h1><p class="sub">当前版本确认后只读检查；修改后，旧检查结果不自动适用。</p></div><a href="workbench.html" class="button">← 返回字幕审阅</a></div>
+<div class="banner">仅导出构造的源字幕示例。基础结构与确认状态在浏览器检查；外部平台验收、真实ASR、生产权限和发布均未实现。</div>
+<section class="block"><h2 class="block-title"><span class="block-code">A</span>当前输入版本与审核门禁 · F-08 / F-10</h2><div id="deliverySummary"></div><div class="row" style="margin-top:15px"><button type="button" id="validate" class="primary">只读检查当前版本</button><label><input type="checkbox" id="qcFault"> 模拟缺少适用规范（失败场景）</label></div><div id="validation" role="status" aria-live="polite"></div></section>
+<section class="block"><h2 class="block-title"><span class="block-code">B</span>生成源字幕文件 · F-07</h2><div class="row"><label>格式<select id="format"><option value="srt">SRT</option><option value="vtt">WebVTT</option></select></label><button type="button" id="exportFile" class="primary">生成并下载示例文件</button><label><input type="checkbox" id="exportFault"> 模拟生成失败</label></div><div id="exportResult" role="status" aria-live="polite"></div><p class="hint">这是原型选用的演示格式，不代表生产格式已锁定。恢复导出不会重跑识别；浏览器发起下载不等于能证明用户已保存文件。</p><div id="exportHistory"></div></section>
+<section class="block"><h2 class="block-title"><span class="block-code">C</span>与未来全局发布的边界</h2><div class="global-states"><span>源字幕已导出（本批）</span>→<span>初翻 / 审校（后续）</span>→<span>终版校验</span>→<span>人工签发 PUBLISH_READY</span>→<span>外部发布与真实回执</span></div><p class="hint">后续节点为流程说明，没有实际发布按钮或“已发布”假状态。当前源字幕不能标成整片多语种终版。</p></section>
+<section class="block"><h2 class="block-title"><span class="block-code">D</span>可追溯记录</h2><ol id="deliveryLogs" class="logs"></ol></section>
+</main></div><div id="dialogHost"></div><script src="state.js"></script><script src="proto.js"></script></body></html>

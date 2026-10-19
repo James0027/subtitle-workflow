@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>字幕链路 · 动作与系统行为说明</title><link rel="stylesheet" href="blueprint.css"></head>
+<body>
+<div class="notice" style="margin:16px 4%">历史V2过程说明，保留参考。当前独立步骤交互稿：<a href="index.html">打开V3页面目录 →</a></div>
+<header><a class="brand" href="blueprint.html">字幕项目 <span>/ 交互说明原型 V2</span></a><a href="../README.md">说明与来源 ↗</a></header>
+<div class="intro">
+  <span class="eyebrow">十二步 · 第③步 · 待业务评审</span>
+  <h1>点一个动作，看清系统应当做什么。</h1>
+  <p>从素材到交付，展开每次操作的输入、校验、处理、记录变化与响应。这里评审的是<strong>产品行为与交接</strong>。</p>
+  <div class="notice">说明型原型：点击只切换设计说明和构造案例，不上传文件、不检测媒体、不调用模型、不写业务记录。字段、状态名称与标识为草案，尚未锁定 schema、API 或规则阈值。</div>
+</div>
+<main>
+  <section class="overview" aria-label="全局框架">
+    <h2>A / 先看业务全景</h2>
+    <p><strong>原文七阶段：</strong>素材入库 → 听写对齐 → 初翻 → 文化审校 → 语言审校 → 格式质检 → 发布</p>
+    <p><strong>拟设计六模块：</strong>ASR/对齐、初翻、文化检测、单位格式、口语审校、合规输出。模块支撑业务阶段，不替代七阶段，也不替代人工职责。</p>
+    <p><strong>共享支撑：</strong>素材与版本、任务上下文、规则来源与版本、权限/停止控制、过程及人工决定记录。首批详细展开入库与源字幕链路，后续模块仅作交接概览。</p>
+    <div class="handoff"><span>素材入库的交付物</span><strong>母版 ＋ 任务单</strong><span>→ 听写对齐的处理依据</span></div>
+  </section>
+  <div class="layout">
+    <aside><h2>B / 选择要查看的动作</h2><p class="muted">可任意查看，不代表跳过前置条件执行。</p><nav id="actionNav" aria-label="动作目录"></nav></aside>
+    <article id="detail" aria-live="polite"></article>
+  </div>
+  <section class="overview source">
+    <h2>H / 这些内容来自哪里</h2>
+    <div class="columns">
+      <div><h3>原文要求</h3><p>课件 §0.3.1：七阶段及母版与任务单。§1.4：关键规则、过程驱动、双向引用。§1.5—1.6：BRD范围和逐状态原型、人工保护与发布闸门。</p></div>
+      <div><h3>参考写法</h3><p>参考工程 page-list 倒推数据与接口；ops-realtime 展开处理链；ops-response-log 展示入出参与记录前后对照。本项目替换为字幕行为。</p></div>
+      <div><h3>本轮设计草案</h3><p>动作划分、任务单字段、分支和记录示例。真实字段、权限、规则优先级、预算口径与服务选型后续确认；示例不构成业绩或实现结果。</p></div>
+    </div>
+    <p><a href="../page-list.md">页面与动作清单</a> · <a href="../action-map.md">评审重点与后续锁定线索</a> · <a href="legacy-index.html">历史 V1 编辑器（旧方向，仅参考）</a></p>
+  </section>
+</main>
+<footer>当前只评审“应发生什么”。后台、权限、预算、模型质量与发布能力均未实现或验证。</footer>
+<script src="blueprint-data.js"></script><script src="blueprint.js"></script>
+</body></html>

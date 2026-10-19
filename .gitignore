@@ -1,0 +1,35 @@
+# Secrets: keep only the empty/example template
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+
+# Runtime / dependencies
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local media / outputs (not source deliverables)
+*.mp4
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.flac
+runtime/
+uploads/
+outputs/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
