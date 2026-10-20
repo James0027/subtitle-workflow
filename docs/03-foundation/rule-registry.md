@@ -1,7 +1,7 @@
-# 规则注册表 v0.1
+# 规则注册表 v0.2
 
 > 上游（我引用）：[AGENTS.md](../../AGENTS.md) §3、§8；[AI权限](../../rules/ai-permissions.md) §2；[BRD](../01-brd/BRD.md) §2.3、§4；[动作说明](../02-prototype/action-map.md) §2—4；[数据契约](schema.md)；[指标契约](metrics.md)；外部课件 §0.5—0.7、§1.4—1.6、§3.3、§4、§5、§6.5、附录 A—C；meeting/week1.txt、week2.txt（出处见 §10）。
-> 下游（引用我）：[V3原型说明](../02-prototype/README.md)；[V3页面清单](../02-prototype/page-list.md)；[AGENTS.md](../../AGENTS.md) §6—8；[联合基线](README.md)；[数据契约](schema.md)；[样本](samples.md)；[指标契约](metrics.md)；[事件契约](metric-events.md)；主子PRD、实现及正式测试待建立。
+> 下游（引用我）：[V3原型说明](../02-prototype/README.md)；[V3页面清单](../02-prototype/page-list.md)；[AGENTS.md](../../AGENTS.md) §6—8；[联合基线](README.md)；[数据契约](schema.md)；[样本](samples.md)；[指标契约](metrics.md)；[事件契约](metric-events.md)；主子PRD及首批正式TC已建立，实现未开始。；[主PRD](../05-prd/mainprd.md)（全局目标、状态、权限及验收）；[01子PRD](../05-prd/01-subprd-intake-task.md)（收料/母版/任务与开工）；[功能子PRD索引](../05-prd/README.md)（十份功能规格）
 
 状态：**v0.1 设计定义，待评审；未部署、未配置规则引擎、未完成真实业务验证。** 用户授权联合整理第④⑤⑥步，保持现有原型。锁定指稳定 ID、范围、行为和变更程序，不代表把课件建议数字直接投入生产。
 
@@ -12,6 +12,7 @@
 - Task 指业务任务单；Run 指一次模块执行。课件 §4.1 将一次执行也命名为 task_id，本项目以 run_id 区分，不能混用预算、重试和任务统计边界。
 - `HARD` 是确定性阻断约束，`SOFT` 是提示或人工判断；它们不等同于风险 P0/P1/P2。模型自信、提示着色不产生法律事实。`BLOCK` 也必须说明阻断的是调用、修改、交付合格包还是签发。
 - AI 输出默认候选；人、代码、模型分工按规则注册，最终权限由服务端控制。规则文件不是运行能力的证明。
+- 2026-10-20用户确认：有权人员可预授权中间自动继续，未授权时保留请求授权入口；权限等级后补。预授权不代替必要输入、有效准入/校验、预算和硬阻断，也不代替母版/最终人工确认、签发和锁定保护。授权/检查记录以schema的execution_policy、Authorization和既有permission.checked承接，不另建重复编号。
 - 课件 §0.5 是六个思考维度；§0.7 **实际列五类典型冲突**，既不是六类，也不是完整冲突全集。
 
 ## 2. 单条规则的完整登记契约
@@ -31,7 +32,7 @@
 | 关联 | metric_ids、requirement_refs、test_refs、implementation_refs | 未建立位置写待建立；规则不得伪称已有用例/实现 |
 | 变更控制 | evaluation_report、影响范围、批准、灰度、rollback_to、历史版本 | 未验收的新版本不能替换活动包 |
 
-每个 Run 固定规则活动集快照及 hash；每次命中至少记录：task_id、run_id、segment_id（入库可空）、input_revision、rule_id/version、实际 scope、输入证据引用、参数版本、PASS/WARN/BLOCK/SKIP/NEEDS_CONTEXT/ERROR、动作、原因、人工接手人和 Event。字段具体表示遵守 schema.md。
+每个 Run 固定规则活动集快照及 hash；每次命中至少记录：task_id、run_id、segment_id（素材准备可空）、input_revision、rule_id/version、实际 scope、输入证据引用、参数版本、PASS/WARN/BLOCK/SKIP/NEEDS_CONTEXT/ERROR、动作、原因、人工接手人和 Event。字段具体表示遵守 schema.md。
 
 同一 Run 内不热切换规则版本；需改规则时停止当前路线或新建 Run。规则未命中不等于内容无风险，尤其不能把模型未报风险作为已证实安全。
 
@@ -84,7 +85,7 @@
 | rule_id / 范围 / 关联 BRD | 类型与执行者 | 条件 → 动作、失败/升级 | 证据/原因、指标、最低用例方向 |
 | --- | --- | --- | --- |
 | RULE-SUB-001 / 全局 / F-08 | HARD；代码权限+人工采纳 | Agent 企图修改 HUMAN_APPROVED/MANUAL_LOCKED 正文 → 拒绝；只准另建候选。授权人工采纳另建修订，保留原稿 | 输入修订、锁定状态、调用身份、前后引用；LOCKED_WRITE_DENIED；MET-GOV-002；并发旧版写入也拒绝 |
-| RULE-SUB-002 / 交付全局 / F-07/08 | HARD；代码闸门+签发人 | 未经人工决策、当前校验或授权签名 → 不可标 PUBLISH_READY；系统无自动发布权 | Validation/ReviewDecision/Artifact 的版本绑定；GATE_BLOCKED；MET-GOV-003/002；旧签名不可签新稿 |
+| RULE-SUB-002 / 交付全局 / F-07/08 | HARD；代码闸门+签发人 | 未经人工决策、当前校验或授权真人签名 → 不可正式导出/交付或标 PUBLISH_READY；VALIDATED仅为内部已验文件；系统无自动发布权 | Validation/ReviewDecision/Artifact 的版本绑定；GATE_BLOCKED；MET-GOV-003/002；旧签名不可签新稿 |
 | RULE-SUB-003 / 外部规则 / F-09/10 | HARD；代码核验+规则 owner | 来源/版本/适用范围缺失 → NEEDS_CONTEXT；过期或 P0 相关上下文不全 → 阻断对应路线并升级 | 来源快照/hash、版本、有效期；RULE_VERSION_MISSING/EXPIRED；MET-GOV-001、MET-QUAL-005 |
 | RULE-SUB-004 / 调用全局 / F-10 | HARD；代码控制+任务 owner | 超已批准任务预算或达到连续两次重试停止条件 → 停止自动调用，保留产物；未配置预算/计数策略不能启动付费自动路线 | 成本账本、attempt、停止原因、人工恢复；BUDGET_STOP/RETRY_STOP；MET-COST-002、MET-OPS-001；见 §7 |
 | RULE-GOV-001 / 所有 Run / F-08/10 | HARD；代码 | input_revision 不等于当前受控修订，或已有同幂等键有效结果 → 拒绝旧版写入/复用既有有效结果；失败尝试仍留痕 | Task/Run/Segment/Candidate 与 context hash；STALE_REVISION/IDEMPOTENT_REPLAY；MET-GOV-001；不得多造有效下游候选 |
@@ -94,7 +95,7 @@
 | RULE-INT-001 / 入库 / F-01 | HARD；代码登记+人核对 | 上传只登记 Asset 与检查结果，不自动选母版/建 READY；保留原件、checksum、来源与生成关系；同文件不得误作新剧情样本 | Asset 清单、来源授权、派生关系；ASSET_UNREADABLE/UNAUTHORIZED；MET-INT-001；损坏/错配不得装成功 |
 | RULE-INT-002 / 母版确认 / F-01 | HARD；人确认+代码核验 | 核对视频、帧率/时长、可用声音与附件版本关系；换母版新 media_id；脚本/字幕缺失分别登记，不一律阻断 | Media→Asset 对应、确认人、缺失 owner；MASTER_UNCONFIRMED/ASSET_MISMATCH；MET-INT-001 |
 | RULE-INT-003 / 任务单 / F-01/09 | HARD；人定用途+代码缺项检查 | Task 必须明确母版、处理范围、源语/声音路线、输出要求与责任；多语任务另明 target locale、市场、受众/评级及平台；纯源语任务目标条件显式不适用，不伪造默认值 | Task 版本/确认决策/适用字段；TASK_INCOMPLETE；MET-INT-001；有视频不能直接进 ASR |
-| RULE-INT-004 / 阶段开工 / F-01/02 | HARD；代码门禁+人授权 | 当前阶段条件齐备才 READY；没有独立音轨可登记从视频提取；无可用声音不能从零 ASR；已有字幕按核对/对齐任务走；多语条件未全但获准源语子范围，仅启动源语处理 | Task/Media/Asset 条件、阶段 Validation、授权；STAGE_NOT_READY；MET-INT-001；不能将源语就绪冒充全任务就绪 |
+| RULE-INT-004 / 阶段开工 / F-01/02 | HARD；代码门禁+人授权 | 素材准备先建真实Task草稿并以ingest Run记录；仅素材准备可在正式确认前进行。ASR等六模块须已确认任务及当前阶段条件齐备才 READY；没有独立音轨可登记从视频提取；无可用声音不能从零 ASR；已有字幕按核对/对齐任务走。用户可明确创建单模块任务，复用输入/版本/授权检查；缺目标的多语任务不自动降范围或转源语 | Task/Media/Asset 条件、阶段 Validation、授权；STAGE_NOT_READY；MET-INT-001；无任务单不启动，模块就绪不冒充全链就绪 |
 
 入库四条为本项目补充设计，不声称课件给出完整企业 SOP；原文只明确视频/音轨/脚本输入及母版与任务单输出。原始素材质量和授权失败由人处理，代码负责客观检查，模型不承担编号、任务字段完整性和权限校验。
 
@@ -206,3 +207,9 @@ Netflix 5/6秒—7秒、TTML 等仅是课件公开规范示例，**不登记为�
 | work/知识索引.md；09-六维度与治理机制的推导.md；prototype/action-map.md | 保持七业务阶段、六处理模块、母版/任务单和说明型原型边界 | 历史总结非新增批准证据；现有原型保持不改 |
 
 待评审并阻止相应生产路线的配置：首批语种/市场/平台与rating；真实签约规则包及owner；校准数据/抽检比例；预算与重试计数/恢复；批量保存事务策略；角色授权矩阵/双人复核适用条件；SLA与保留周期。以上不妨碍本轮形成完整可评审契约，但不能在缺失时称全链路可自动运行。
+
+## 首批源语落地准备（2026-10-20）
+
+[首批方案](../07-delivery-plans/source-release-solution.md)、[技术契约草案](source-release-contract.md)、[实施计划草案](../07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](../06-testcase/tc-main-subtitle-workflow.md)。
+
+首批仅收料/任务→转写、核对或对齐→人工源稿审阅→源语导出；174条TC设计全部NOT_RUN，8项实现任务全部阻塞。技术方案及契约是PROPOSED，数据字段仍以schema为权威；采纳扩展须在T0.1先同步权威定义。真实样本、权限、模型/阈值和预算仍待确认；多语模块未纳入本批实现。不把静态检查或合成配方当业务验收。

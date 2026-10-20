@@ -1,7 +1,7 @@
-# 数据契约 v0.1
+# 数据契约 v0.2
 
 > 上游（我引用）：[AGENTS](../../AGENTS.md) §8；[BRD](../01-brd/BRD.md) §2.3、§4；[原型动作](../02-prototype/action-map.md) §2—§4；[规则登记](rule-registry.md)；[指标契约](metrics.md)。
-> 下游（引用我）：[V3原型说明](../02-prototype/README.md)；[V3页面清单](../02-prototype/page-list.md)；[样本说明](samples.md) §2—§6；[规则登记](rule-registry.md)；[指标契约](metrics.md)；主子 PRD 待建立。
+> 下游（引用我）：[V3原型说明](../02-prototype/README.md)；[V3页面清单](../02-prototype/page-list.md)；[样本说明](samples.md) §2—§6；[规则登记](rule-registry.md)；[指标契约](metrics.md)；主子PRD已建立。；[主PRD](../05-prd/mainprd.md)（全局目标、状态、权限及验收）；[01子PRD](../05-prd/01-subprd-intake-task.md)（收料/母版/任务与开工）；[功能子PRD索引](../05-prd/README.md)（十份功能规格）
 
 状态：本轮获授权形成第④步设计基线草案，待评审；**没有真实数据集锁定、建库、接口实现或生产迁移**。已确认底线必须遵守，新增字段/枚举是本项目 v0.1 设计。技术栈未选定，本文类型是逻辑类型，不直接套用参考项目 D1/SQLite。
 
@@ -26,7 +26,7 @@
 
 - `media_id` 唯一标识一个不可变母版；换剪辑、画面或母版声音必须新建 media_id，并用 supersedes_media_id 关联旧版。重复上传相同文件不自动建立新母版。
 - Asset 原件不覆盖；转码/提取/脱敏另建 asset_id。checksum 相同只说明字节相同，不证明脚本/字幕语义对应；不得据此跳过人工错版核对。
-- Task 的每次业务定义修改生成不可变 task_revision 快照；Run、Artifact 引用确切快照。运行中的旧版不自动改绑，新版需重新判定就绪。
+- Task创建即取得稳定task_id；DRAFT不是另一种ID，确认/状态变化不换ID。Task 的每次业务定义修改生成不可变 task_revision 快照；Run、Artifact 引用确切快照。运行中的旧版不自动改绑，新版需重新判定就绪。
 - Segment 身份不随文字/时间修订改变；拆分/合并新建 ID，记录 parent_segment_ids 与 operation。旧 ID 退役保留，禁止把多个事件偷偷复用同一 ID。
 - `Segment.revisions[]` 与 `Candidate` 追加保存；`Segment.current_revision` 是受控指针。确认稿不可被 Agent 原位更新；人工改稿生成新修订并使受影响校验/签发失效。
 - 乐观并发：保存/采纳须提交 expected_revision；与当前不符写 STALE_INPUT 失败事件，保留旧候选，不自动覆盖或合并。
@@ -72,10 +72,12 @@
 
 | 字段 | 类型/必填 | 约束与含义 |
 | --- | --- | --- |
-| task_id / project_id | string/是 | 业务任务单主键；同项目幂等提交避免重复任务 |
+| task_id / project_id | string/是 | 创建真实任务草稿时生成并始终不变；同项目幂等提交避免重复任务；草稿允许任务内容待补，不能借此执行ASR |
 | task_revision / request_key | int,string/是 | 修订>=1；同项目request_key唯一，重复请求返回原结果 |
-| media_id / parent_task_id | string/确认时,string/null | →确认Media；源语先行子任务显式关联原全局任务 |
+| media_id / parent_task_id | string/确认时,string/null | →确认Media；确有父任务时关联，否则null；不为单模块调用强制创建一个缺资料的多语父任务 |
 | task_type | enum/是 | source_only/multilingual；不以目标字段空值猜测类型 |
+| execution_mode | enum/是 | workflow/module_only；完整流程或单模块任务。单模块范围以module_plan明确，不重复新增模块清单字段；仍须确认任务、满足该模块输入与权限条件 |
+| execution_policy | object/是 | review_mode:manual/preauthorized；authorization_ref:Ref\|null。默认manual；preauthorized只允许在有效授权范围及阶段条件通过后自动继续，不代替母版确认、最终审稿/签发或人工稿保护；具体人员权限等级后补 |
 | purpose / owner_id | string/确认时 | 用途及负责交接的人；人确认，代码检查缺项 |
 | source_locale | string/确认时 | BCP47；与实测识别不符产生Issue，不静默改写 |
 | processing_route | enum/确认时 | transcribe/align_existing/verify_existing；已有字幕不强行重做ASR |
@@ -92,7 +94,9 @@
 | confirmed_by / confirmed_at | string,timestamp/确认时 | 确认准确快照；修改目标/范围后原确认不沿用 |
 | ready_at / completed_at | timestamp/null | 实际阶段事件投影；禁止预填完成时间 |
 
-`audience={description:string,age_group:string,decision_ref:string}`；评级和受众不能靠模型推定。未知市场/规范不伪造版本，保持pending并阻断依赖该条件的阶段。完整多语任务未定义目标时，可另建经授权source_only子任务，不把原任务标成全局READY。
+`audience={description:string,age_group:string,decision_ref:string}`；评级和受众不能靠模型推定。未知市场/规范不伪造版本，保持pending并阻断依赖该条件的阶段。用户可以明确创建源语或单模块任务；不自动将缺目标的多语任务降成源语任务，本轮不设计专门的“源语先行子任务”流程。
+
+单模块任务复用Task/Run/输入输出引用，不另建一套任务对象。用户明确选择模块、用途、处理范围、输入和输出要求，必要前置资料由用户提供或从已授权的项目记录引用；不要求重跑全部上游，但不能跳过该模块的输入版本、确认/授权、规则、预算及质量条件。`task_type`仍描述源语或目标语业务范围，与`execution_mode`区分。调用入口及接口形式在主/子PRD明确，当前未实现。
 
 ## 4. 字幕、候选、运行与问题
 
@@ -130,6 +134,7 @@
 | 字段 | 类型/必填 | 约束与含义 |
 | --- | --- | --- |
 | run_id / task_id / task_revision / trace_id | string,string,int,string/是 | 主键、任务快照、全链相关ID |
+| authorization_ref / permission_check_ref | Ref\|null,Ref/运行前 | 引用本次采用的预授权（人工逐次确认可为空）及实际permission.checked事件；不把任务负责人身份直接当自动执行授权。每次敏感动作按目标版本重新检查，未授权保留等待/拒绝分支 |
 | module / input_refs / input_revision | enum,array<Ref>,int/是 | 入库检查可用module=ingest；六处理模块见§5；批处理每个input_ref带revision |
 | idempotency_key / attempt_no | string,int>=1 | run_id在同配置重试中保持不变；attempt_no是最新尝试的投影；新配置/人工重跑另建Run并可记supersedes_run_id；有效结果组只投递一次 |
 | attempts | array<object>/是 | 每次尝试含attempt_no、started_at/ended_at、status、failure、steps、usage、output_refs；(run_id,attempt_no)唯一；不得只保留最后一次以丢失失败与费用；初次与重试停止解释以规则登记为准 |
@@ -140,6 +145,8 @@
 | usage | object/是 | latency_ms:int\|null、input_tokens/output_tokens:int\|null、cost_amount:string\|null、currency:string\|null、cost_status:actual/estimated/unavailable、billable_call_id:string\|null；未知费用不是0 |
 | controls | object/是 | budget_policy_ref:string\|null、budget_scope_id:string\|null、spent_amount:string\|null、consecutive_retry_count:int、stop_reason:string\|null、resume_decision_ref:Ref\|null；数值与计次策略待规则确认 |
 | output_refs / failure | array<Ref>,object\|null | failure含code、category、retryable:bool、redacted_detail、owner_role；空输出不伪装SUCCEEDED |
+
+步骤名与执行实例分开：同一attempt内step_id唯一，定位一次步骤执行须使用(run_id,attempt_no,step_id)。重试保留各次steps；步骤actor_type不代替实际执行主体，具体actor_id及角色通过关联Event回查。已有input_refs/output_refs承接上下游依赖，不重复增设依赖编号或步骤日志表。
 
 ### 4.4 Issue：风险、证据及冲突
 
@@ -162,24 +169,46 @@ P0需要有效市场/触发片段/适用规则及证据；仅模型高分不能�
 | module枚举 | 读取 | 新建输出与必留信息 | 不允许 |
 | --- | --- | --- | --- |
 | asr_alignment | 确认母版/任务范围、音轨、可选已有字幕/脚本 | Segment/Candidate(text/timing)、Run步骤、音质/重叠/专名Issue；chunk音轨区间与母版offset_ms、重叠拼接策略版本；时间戳保留工具来源 | 无声音仍成功；删重叠说话标签；把普通代码描述成已解决真实对齐 |
-| translation | 确认源修订、目标variant、局部上下文及锁定术语 | 译文Candidate、term_hits、source_spans、上下文清单与缺项 | 覆盖确认稿；跨市场混用 |
-| culture_check | 指定目标修订、市场/受众/评级及规则包 | Issue、证据、严重性与置信分、升级建议；无问题也留检查范围 | 无证据红线；模型擅自净化剧情 |
+| translation | 已确认源修订或符合下述预授权交接条件的指定源候选、目标variant、局部上下文及锁定术语 | 译文Candidate、term_hits、source_spans、上下文清单与缺项 | 覆盖确认稿；跨市场混用 |
+| culture_check | 指定目标修订/获准流转候选、市场/受众/评级及规则包 | Issue、证据、严重性与置信分、升级建议；无问题也留检查范围 | 无证据红线；模型擅自净化剧情 |
 | unit_format | 数值/单位/剧情上下文及地区政策 | unit_change候选：source_value/unit、target_value/unit、conversion_formula_version、rounding_policy_ref、exception_reason | 不看语境自动换算；擅自改汇率/日历 |
 | oral_review | 目标稿、显示时间、角色风格、阅读规则 | readability_tag及可选候选；CPS/字符数/词数与分词版本、语义保护项 | 计数通过就宣称语义自然；直接改锁定稿 |
 | compliance | 确认稿精确修订、输出规格/profile | Validation、Artifact，错误定位与规则版本 | 把校验通过或生成文件写成已发布 |
 
 同一module可只跑代码/模型/人工中的必要部分；context_manifest明确not_used，不能为凑齐字段虚构一次模型调用。输入稿变更后的影响分析保留旧结果，仅新建复检，局部修复由人触发的语义分支须有决定引用。
 
+默认在既定人工节点复核。有权人员预授权后，中间候选满足该阶段有效准入/校验、无待决阻断且授权仍有效时可继续；下游input_refs必须指向确切Candidate及版本。候选保持AI_PROPOSED，不伪造ReviewDecision或HUMAN_APPROVED；最终人工审稿要覆盖交付范围及其源语依据，合规输出仍消费人工确认稿。缺输入、无有效校准/规则、冲突或停止条件出现时，权限不能代替条件。母版确认、最终审稿、人工签发与已锁定稿保护不被自动继续授权替代。具体路由阈值仍待验证，未定义准入的节点不默认自动放行。
+
 ## 6. 决策、校验、交付与采集
+
+### 预授权概念（具体权限等级后补）
+
+本轮只区分“有该动作授权”和“无该动作授权”，不建立数字等级或完整组织/IAM系统。原型可假设示例负责人具备授予当前范围自动执行的权限，但真实运行须验证身份，不能因权限等级尚未配置而自动给任何人授权。
+
+`Authorization={authorization_id, task_id, task_revision, granted_by, principal_id, scope:{modules,actions}, status:active/revoked, grant_decision_ref:Ref, revoked_decision_ref:Ref|null}`。授权人、执行主体、任务修订和可执行范围明确；创建时间复用公共created_at。撤销或任务变更后重新检查，不能无范围继承。ReviewDecision记录实际授权/撤销，执行记录引用授权，permission.checked继续记录每次实际检查。人员/角色等级、各角色可授予哪些动作及更细的有效期策略在PRD后补；无授权时请求有权人员处理，不继续敏感操作。
 
 | 对象 | 必填字段（逻辑类型） | 条件及约束 |
 | --- | --- | --- |
-| ReviewDecision | decision_id/task_id/actor_id/actor_role/action/reason_code:string；occurred_at:timestamp；target_refs:array<Ref>；before_ref:Ref；expected_revision:int；after_ref:Ref\|null | action=accept/edit/edit_accept/reject/skip/escalate/revoke/rollback/confirm_master/confirm_task/signoff；内容动作关联candidate_id/segment_id；edit仅保存草稿，不确认；edit_accept为人工明确编辑后接受；skip为人工显式跳过，自动阻断不伪装人工决定；编辑必有after_ref；其他动作可目标对象快照替代字幕ref；reason_code不可只留自由文案 |
+| ReviewDecision | decision_id/actor_id/actor_role/action/reason_code:string；task_id:string；occurred_at:timestamp；target_refs:array<Ref>；before_ref:Ref；expected_revision:int；after_ref:Ref\|null | action=accept/edit/edit_accept/reject/skip/escalate/revoke/rollback/confirm_master/confirm_task/signoff/authorize_execution/revoke_authorization；授权动作不算内容接受；内容动作关联candidate_id/segment_id；edit保存编辑修订，不代表审核通过；保存并提交审核为编辑完成/待审，未提交可继续编辑；edit_accept为人工明确编辑后接受；skip为人工显式跳过，自动阻断不伪装人工决定；编辑必有after_ref；其他动作可目标对象快照替代字幕ref；reason_code不可只留自由文案 |
 | ReviewDecision补充 | batch_id:string\|null、supersedes_decision_id:string\|null、undoes_decision_id:string\|null、reason_note:string\|null、permission_check_ref:Ref | 批量按候选拆单决定，共享batch_id；撤销指向原决定；rollback另建新修订且不抹去历史；旧修订冲突的单项失败单记Event，不虚构批量全成功 |
 | Validation | validation_id/task_id/run_id:string；subject_refs:array<Ref>；profile_ref:{id,version}\|null；checked_at:timestamp；check_kind:string；result:PASS/FAIL/NOT_APPLICABLE/NOT_EXECUTED；checks:array<object> | checks含rule_id/version、result、observed_value、threshold_ref、locator、issue_id\|null；未执行与不适用区别；最终技术检查绑定每条确认稿和产物校验值；人工修订后旧PASS失效 |
 | Artifact | artifact_id/task_id/delivery_unit_id:string；task_revision:int；kind:source_subtitle/target_subtitle/qc_report/delivery_package；format:string；storage_ref:string；checksum_sha256:string；created_at:timestamp；source_refs:array<Ref>；run_ids:string[] | delivery_package引用全部实际交付组成物；原件/候选不混成交付；文件行→segment/revision/variant_key映射必留；无效未验包可另存但标明 |
-| Artifact状态 | delivery_status:DRAFT/QC_FAILED/VALIDATED/PUBLISH_READY/PUBLISHED；validation_ids:string[]；signoff_decision_id:string\|null；external_receipt_ref:string\|null | PUBLISH_READY必须有授权人签发及有效校验；PUBLISHED只能记录外部流程真实回执；系统不新增自动发布能力；源语导出不冒称平台已验收 |
-| Event | event_id/project_id/task_id/trace_id/event_type/actor_id/actor_type:string；event_at/received_at:timestamp；schema_version:string；metric_contract_version:string；dedup_key:string；subject_refs:array<Ref>；payload:object | 追加不可改，(project_id,event_type,dedup_key)唯一；重送不重复记行为；media_id/run_id/attempt_no/segment_id/candidate_id/issue_id/decision_id/validation_id/artifact_id/actor_role/source_revision/variant_key及model_version/prompt_version/rule_version/profile_version按事件条件必填；记录真实发生时点，晚到可重算；同次人工操作operation_id，多事件不得被当多次操作；Run业务idempotency_key独立于事件dedup_key |
+| Artifact状态 | delivery_status:DRAFT/QC_FAILED/VALIDATED/PUBLISH_READY/PUBLISHED；validation_ids:string[]；signoff_decision_id:string\|null；external_receipt_ref:string\|null | PUBLISH_READY必须有授权人签发及有效校验；PUBLISHED只能记录外部流程真实回执；系统不新增自动发布能力；VALIDATED只证明内部文件通过检查，不开放正式导出；源语与目标语均须当前包真人签发后才可正式导出，仍不冒称平台已验收 |
+| Event | event_id/project_id/trace_id/event_type/actor_id/actor_type:string；task_id:string\|null（见下方条件）；event_at/received_at:timestamp；schema_version:string；metric_contract_version:string；dedup_key:string；subject_refs:array<Ref>；payload:object | 追加不可改，(project_id,event_type,dedup_key)唯一；重送不重复记行为；media_id/run_id/attempt_no/segment_id/candidate_id/issue_id/decision_id/validation_id/artifact_id/actor_role/source_revision/variant_key及model_version/prompt_version/rule_version/profile_version按事件条件必填；记录真实发生时点，晚到可重算；同次人工操作operation_id，多事件不得被当多次操作；Run业务idempotency_key独立于事件dedup_key |
+
+### 任务草稿、素材准备与正式开工
+
+新流程为：创建真实Task草稿并取得稳定task_id→接收/关联素材、探测和提取音轨→人工确认母版→人工确认确切Task修订→ASR/核对/对齐。任务确认不换ID；补充任务定义按既有task_revision留快照。草稿不是伪造已确认任务，必填业务定义允许待补，正式确认仍按§3.3校验。
+
+Draft Task仅允许已授权的`module=ingest`素材准备Run：已接收原件的探测、提取/校验派生音轨等。该Run绑定真实Task修订、Asset输入、工具/参数与输出，Asset.transform.run_id因此始终可填。此时Media可未确认、Task.media_id可待补，但必须有同项目真实原件、用途权限和适用停止控制；不得运行ASR、翻译、审稿、签发或其他六模块。素材准备完成不把Task标为业务IN_PROGRESS/COMPLETED。
+
+无独立音轨但视频含可用声音时可提取；独立音轨与视频均无可用声音时阻断声音处理，不把脚本复制成转写结果。确认母版与确认任务均由有权真人实际操作，决定与事件绑定同一Task。
+
+新流程的Asset登记、Media确认、权限检查及全部执行/决定/产物事件均绑定实际Task。Event.task_id可空仅供读取已有无任务的原始收料/对象权限历史记录；不再新建无Task确认母版/抽轨记录，不回填改写历史。Run、Validation、ReviewDecision始终须Task。
+
+编辑工作完成与审核状态分开：Run成功/候选生成仅表示该模块产出完成；人工保存编辑可继续修改，保存并提交审核时追加`review.submitted`事件，绑定确切分支/修订及编辑主体。待审仍为UNREVIEWED/NEEDS_REVIEW，不因提交变HUMAN_APPROVED。最终审核与签发必须由具备相应权限的人分别决定，编辑角色默认无审核权。无候选人工稿审核复用既有edit_accept与Segment Ref，不造candidate_id。
+
+正式导出消费已人工确认的内容，先内部生成并重解析、校验得到VALIDATED，再由有权真人signoff绑定Artifact hash、Task修订、所有source_refs、规则/profile及Validation引用，成为PUBLISH_READY。正式文件下载/交接每次重新检查签发当前有效、输入/规则/权限未变化；成功提供正式文件才追加`artifact.exported`。请求失败/中断/结局未知不得冒记成功。Task完成须已有必要内容确认、当前有效签发和约定正式导出/交接记录；PUBLISHED仍仅据真实外部成功回执。
 
 ### 6.1 指标原始记录（公式只在 metrics.md）
 
@@ -211,4 +240,14 @@ P0需要有效市场/触发片段/适用规则及证据；仅模型高分不能�
 
 待确认：首批语种/市场/profile与受众范围、真实身份角色映射、存储/保留期限、说话人识别能力、ASR工具时间基准与校准、批量部分成功交互、预算计次边界、实际字段序列化。未确认前不使用课件阈值自动放行。
 
+2026-10-20用户授权补齐：复用既有追踪/版本/依赖/事件字段；补execution_mode、execution_policy、最小Authorization概念及运行授权/检查引用，明确步骤实例唯一性。预授权自动继续、未授权分支、按需单模块调用由本轮确认方向补充；权限等级和接口实现后续细化，正式后台尚未实现。
+
 评审后给 schema_version 固定版本；改字段类型/枚举/语义需影响分析，关联规则/指标/原型/PRD/用例及样本版本。兼容新增可选字段亦记录变更；删除/复用旧ID或改历史事件含义须迁移方案。本文写出约束不代表服务端已经实现。
+
+2026-10-21确认修订：创建草稿即使用稳定Task ID，抽轨走绑定草稿的ingest Run；替代2026-10-20任务前确认母版例外。编辑提交与审核分开，所有正式导出必须真人签发；依据用户逐项确认，已同步PRD/事件/计划/用例。无真实数据库迁移。
+
+## 首批源语落地准备（2026-10-20）
+
+[首批方案](../07-delivery-plans/source-release-solution.md)、[技术契约草案](source-release-contract.md)、[实施计划草案](../07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](../06-testcase/tc-main-subtitle-workflow.md)。
+
+首批仅收料/任务→转写、核对或对齐→人工源稿审阅→源语导出；174条TC设计全部NOT_RUN，8项实现任务全部阻塞。技术方案及契约是PROPOSED，数据字段仍以schema为权威；采纳扩展须在T0.1先同步权威定义。真实样本、权限、模型/阈值和预算仍待确认；多语模块未纳入本批实现。不把静态检查或合成配方当业务验收。

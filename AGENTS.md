@@ -3,14 +3,15 @@
 适用于整个字幕项目及参与开发的AI。先从本文件定位任务，再读所需材料；用户当前明确要求优先。
 
 > 上游（我引用）：用户当前要求；课件 §0.3.1、§1.5—1.6；[BRD](docs/01-brd/BRD.md)；[来源核对规范](rules/source-check-workflow.md)。
-> 下游（引用我）：[项目导航](README.md)；[十二步产物清单](docs/README.md)；[基础定义](docs/03-foundation/README.md)；[当前进度](docs/00-process/00-02-progress/progress.md)；[项目技能](.agents/skills/subtitle-source-check/SKILL.md)。
+> 下游（引用我）：[项目导航](README.md)；[十二步产物清单](docs/README.md)；[基础定义](docs/03-foundation/README.md)；[当前进度](docs/00-process/00-02-progress/progress.md)；[项目技能](.agents/skills/subtitle-source-check/SKILL.md)。；[主PRD](docs/05-prd/mainprd.md)（全局目标、状态、权限及验收）
 
 ## 1. 项目说明
 
 - 产品：多语种字幕智能校对与文化适配系统，六处理模块与共享能力协作，保留人工审核/签发。
 - 业务范围权威：[BRD](docs/01-brd/BRD.md) §4；统计定义权威：[metrics](docs/03-foundation/metrics.md)。
-- 当前：设计。BRD及数据/规则/指标v0.1内容已获用户认可；本轮已按用户最新要求重做V3独立步骤交互稿，待评审；主子PRD未开始。
-- 本轮：用户确认保存V3，并明确授权初始化Git、新建私有GitHub仓库及推送main；保持设计阶段，不启用Pages或产品部署。
+- 当前：设计。BRD及三项定义已有；V3已按集中评审补内容资料、预授权与单模块方向；[主PRD v0.3](docs/05-prd/mainprd.md)正文草稿已建立、待评审，含目标、状态/权限、架构/接口/数据全景和子PRD大纲；19条需求与57项场景保留于[验收台账](docs/05-prd/acceptance-map.md)，未执行。[十份功能子PRD](docs/05-prd/README.md)正文草稿已建立，局部59需求/177场景未执行。
+- 主子PRD分工调整先看[分工清单](docs/05-prd/README.md)：主PRD保留全局状态/权限、架构/导航/接口与数据全景；功能子文档按完整能力展开。分工已获用户确认，主PRD正文已据此重排，内容待评审。
+- 本轮：用户授权首批源语落地准备并续接收口；既有私有GitHub为此前版本存档，本轮文档修改已获用户授权进行本地Git提交；未推送，不代表部署。
 - 技术栈、部署、真实素材/样本及预算参数尚待确认；目录/占位代码不代表已实现。
 - 六模块：asr_alignment、translation、culture_check、unit_format、oral_review、compliance；不要求每模块都用自主Agent。
 - 原文七业务阶段不改名、不合并。§0.3.1的母版/任务单/字幕等是运行产物，§1.5的BRD/PRD等是建设产物，区分见[产物清单](docs/README.md)。
@@ -35,19 +36,22 @@ subtitle-workflow/
 │   │   └── 00-02-progress/        # progress.md，唯一当前进度
 │   ├── 01-brd/BRD.md
 │   ├── 02-prototype/             # 原型本体：page-list、八个独立步骤HTML
-│   └── 03-foundation/            # 当前基础定义平铺，不造空子目录
-│       ├── README.md
-│       ├── schema.md
-│       ├── samples.md
-│       ├── rule-registry.md
-│       ├── metrics.md
-│       └── metric-events.md
+│   ├── 03-foundation/            # 当前基础定义平铺，不造空子目录
+│   │   ├── README.md
+│   │   ├── schema.md
+│   │   ├── samples.md
+│   │   ├── rule-registry.md
+│   │   ├── metrics.md
+│   │   └── metric-events.md
+│   ├── 05-prd/                   # mainprd及十份子PRD草稿；非已实现
+│   ├── 06-testcase/              # 首批174业务TC+6发布演练及回归集；均未执行
+│   └── 07-delivery-plans/        # 首批主计划/看板/8子计划；未开工
 ├── tests/                        # 现有测试代码框架，未视为已测
 ├── evals/                        # 现有评测框架，未视为已评
 └── .agents/skills/                # subtitle-source-check
 ```
 
-后续按需建立：`docs/04-diagrams/`、`05-prd/`（主文档及模块子文档）、`06-testcase/`、`07-delivery-plans/`、`08-test-reports/`、`09-deploy/`。未到阶段不创建空产物凑目录。
+已经建立：`docs/05-prd/`、`06-testcase/`和`07-delivery-plans/`。后续按需建立：`docs/04-diagrams/`、实际执行时的`08-test-reports/`和`09-deploy/`。未到阶段不创建空产物凑目录。主PRD管全局状态/权限和交接，子PRD管单模块契约；每条P0/P1至少覆盖正常/异常/权限三类用例。
 
 当前原型：[页面清单](docs/02-prototype/page-list.md)、[原型入口](docs/02-prototype/pages/index.html)。只有一个正式原型目录。
 
@@ -58,9 +62,10 @@ subtitle-workflow/
 1. AGENTS只做入口和底线，详细要求引用现有规则，不把全部历史日志或报告堆在这里。
 2. `rules/`管理AI工作规范；`docs/03-foundation/rule-registry.md`管理字幕业务规则，字段/公式分别只在schema/metrics维护。
 3. `docs/`承载正式建设产物；`code/`放实现与运行提示词；`config/`放有明确用途且无密钥的配置。
-4. `.agents/skills/`路由方法，不作业务规则唯一载体。技能不可用时说明，按规则继续；不假称已调用。
+4. `.agents/skills/`路由方法，不作业务规则唯一载体。技能不可用时说明，按规则继续；不假称已调用。2026-10-20迁入的开发技能只在对应阶段使用，不触发当前主PRD之外的计划/测试工作。
 5. 规则/需求/实现冲突先查批准依据，不按代码现状反向降低要求，也不把目标态说成已实现。
 6. 模块只管理本模块契约与专用能力，共享模型/工具/上下文/存取/控制按复用需要抽取；模块交接走明确契约，不直接改其他模块内部结果。
+7. 现有模块目录已具备职责分离：workflow管编排，modules管业务，shared/models与tools管适配，db管结构化持久化，shared/storage管文件引用，shared/context与controls分别管上下文和通用控制。详见[主PRD§三](docs/05-prd/mainprd.md)；不重复重构，不把空框架当实现。
 
 ## 4. 双向引用机制
 
@@ -108,7 +113,17 @@ subtitle-workflow/
 
 ## 7. 已登记项目技能
 
-[subtitle-source-check](.agents/skills/subtitle-source-check/SKILL.md)：本项目各阶段的来源/meeting/历史决定核对与总结。仅项目级；参考模板其他技能未迁移。使用时说明实际所用技能；不可用不编造调用或验证。
+| 技能 | 使用时机与边界 | 状态 |
+| --- | --- | --- |
+| [subtitle-source-check](.agents/skills/subtitle-source-check/SKILL.md) | 来源/meeting/已确认记录核对；按现有source-check规范执行 | 既有技能，保留 |
+| [project-devlog](.agents/skills/project-devlog/SKILL.md) | 实质产物/阶段收口后回写唯一进度、日志和work摘要；现有日志规则优先，不重复建设规范 | 已迁入并可用于本轮记录 |
+| [diagram-design](.agents/skills/diagram-design/SKILL.md) | 明确需要架构/流程/状态等独立图示时；资源完整，导出工具按需检查，不自动安装或写全局profile | 已准备，未生成项目图 |
+| [delivery-planner](.agents/skills/delivery-planner/SKILL.md) | 已授权代码实施阶段、相关PRD/契约齐备后写主计划/看板/子任务；不用于主PRD编写 | 已用于首批源语阻塞计划草案；未启动实现 |
+| [test-case-writer](.agents/skills/test-case-writer/SKILL.md) | 对应阶段按PRD验收点生成正式TC；P0/P1正常/异常/权限覆盖；SQL依实际技术方案 | 首批174条业务TC及6项发布演练已设计；全部NOT_RUN |
+
+参考test-case-runner暂不迁入：其MySQL/SSH/Claude MCP及固定配置假设与当前未选栈不匹配，报告目录前后不一致；待实际环境与正式用例就绪后再适配。不会为复用安装依赖或注册MCP。仅沿用既有testing规范的证据/清理原则，不声称其可运行。
+
+五个源技能的完整性/兼容性决策和验证在工作区work/技能迁移；迁移不等于启用或真实业务验证。使用时声明实际技能；本项目技能仅在本项目作用域可发现，宿主若尚未刷新可按本表读取入口，不假称运行时已加载。不得改用户全局技能/记忆。
 
 ## 8. 执行、禁止项与交付标准
 
@@ -139,3 +154,9 @@ subtitle-workflow/
 - 不删除历史材料；过时内容标历史，避免复制为多套权威。原课件和参考工程未经要求不修改。
 - 简单可核验工作可在既有授权内委派Antigravity；不可用如实说明，不假称执行。复杂取舍和最终核验由主协调负责。
 - 中文沟通；项目记录留在工作区，不自动写用户全局记忆。
+
+## 首批源语落地准备（2026-10-20）
+
+[首批方案](docs/07-delivery-plans/source-release-solution.md)、[技术契约草案](docs/03-foundation/source-release-contract.md)、[实施计划草案](docs/07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](docs/06-testcase/tc-main-subtitle-workflow.md)。
+
+首批仅收料/任务→转写、核对或对齐→人工源稿审阅→源语导出；174条TC设计全部NOT_RUN，8项实现任务全部阻塞。技术方案及契约是PROPOSED，数据字段仍以schema为权威；采纳扩展须在T0.1先同步权威定义。真实样本、权限、模型/阈值和预算仍待确认；多语模块未纳入本批实现。不把静态检查或合成配方当业务验收。

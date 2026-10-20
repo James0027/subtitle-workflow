@@ -31,14 +31,16 @@
 | ④ 数据锁定 | schema+样本：字段、血缘、脱敏、样本桶、标签 | [schema](03-foundation/schema.md)、[samples](03-foundation/samples.md) | v0.1定义内容认可；真实样本未冻结 |
 | ⑤ 规则锁定 | 优先级、版本、市场覆盖、硬软规则 | [rule-registry](03-foundation/rule-registry.md) | v0.1认可；参考阈值未自动启用 |
 | ⑥ 指标锁定 | 分母、窗口、去重、置信区间、报警线 | [metrics](03-foundation/metrics.md)、[事件](03-foundation/metric-events.md) | v0.1认可；未采集真实指标 |
-| ⑦ 主PRD | 端到端状态机、角色、主/异常链路、权限 | docs/05-prd/mainprd.md（未建立） | 用户要求先不写 |
-| ⑧ 子PRD | 六模块输入输出、工具、停止、兜底 | docs/05-prd/模块子文档（未建立） | 未开始；不只写Prompt |
-| ⑨ 计划与测试 | 里程碑/依赖/灰度/回滚/回归集及正常/异常/权限用例 | docs/07-delivery-plans、06-testcase（未建立） | 未进入正式业务计划/用例建设 |
+| ⑦ 主PRD | 端到端状态机、角色、主/异常链路、权限及业务目标承接 | [mainprd.md](05-prd/mainprd.md) | 2026-10-20正文v0.2按确认分工重排，待评审；19条需求/57场景保留于[验收台账](05-prd/acceptance-map.md)，未执行 |
+| ⑧ 子PRD | 六模块与必要共享功能的输入输出、操作、工具、停止、兜底 | [十份子PRD索引](05-prd/README.md) | 十份正文草稿已建立，59条局部需求/177场景NOT_RUN；非正式TC |
+| ⑨ 计划与测试 | 里程碑/依赖/灰度/回滚/回归集及正常/异常/权限用例 | [源语实施计划](07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](06-testcase/tc-main-subtitle-workflow.md) | 首批源语准备稿已建立；8实现任务阻塞；174业务TC+6发布演练均NOT_RUN；[灰度/回滚](07-delivery-plans/main-delivery-plan-source-release.md#rollout)及[回归集](06-testcase/tc-main-subtitle-workflow.md#regression)已设计；多语实现计划未建立 |
 | ⑩ 开发 | 代码、配置、feature flag、事件埋点 | code/、config/ | 仅既有框架，非已实现 |
 | ⑪ 测试 | 离线/影子/灰度，准确/稳定/性能/安全/成本 | tests/、evals/；docs/08-test-reports（正式报告未建立） | 未执行业务或模型验收 |
 | ⑫ 部署 | 版本、发布清单、监控、回滚、责任与运行手册 | docs/09-deploy（未建立） | 未部署 |
 
 `04-diagrams`为参考模板的辅助图示位置，有需要时建立，不是额外的第十三步。未开始阶段不提前创建空文档/目录凑产物。
+
+主子PRD的[分工与全局内容安排](05-prd/README.md)已获用户确认并落实到主PRD v0.3：系统架构、导航、页面/接口调用全景、系统数据全景及十项功能子PRD大纲。台账完整承接19需求/57场景，不构成第三级PRD；十份功能子PRD正文草稿已建立；接口/序列化等实现前待办集中于子PRD索引。
 
 ## 3. 参考模板复用与本项目调整
 
@@ -53,3 +55,7 @@
 - 讨论/摘要/学习记录：工作区根work及知识索引。
 - 原型辅助检查：work/原型制作/检查记录/v1、v2；契约静态检查：work/三项锁定/检查记录。保留用例、结果和截图，已移出正式测试区。
 - 本轮旧→新路径、验证和历史路径解释：work/目录梳理/migration-map.json；不改历史会话中当时记录的事实。
+
+## 2026-10-21确认后当前范围
+
+稳定任务ID/草稿准备、编辑提交与审核分权、影子/性能、人主导修复、成套版本维护和所有正式导出真人签发已回写现有定义/主子PRD/原型/计划/用例。已确认业务设计可进入第⑩首批实施的基线与环境准备；实际栈/语种样本/身份/预算仍在T0.1落实，未安装或运行产品。

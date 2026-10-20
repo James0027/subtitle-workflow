@@ -1,0 +1,159 @@
+# 子PRD 10：任务执行、授权与追踪
+
+版本：v0.2｜日期：2026-10-21｜状态：设计草稿，待评审；未实现调度、权限、成本控制或埋点服务。
+
+> 上游（我引用）：[主PRD](mainprd.md) §三—九；[BRD](../01-brd/BRD.md) F-10；[01子PRD](01-subprd-intake-task.md) §4—7；[schema](../03-foundation/schema.md) Task/Run/Authorization/Event；[规则](../03-foundation/rule-registry.md) RULE-SUB-001—004、RULE-GOV-001/003、RULE-OPS-001—004；[指标](../03-foundation/metrics.md)；[事件](../03-foundation/metric-events.md)；[原台账](acceptance-map.md) R03/04/05/14/15/19。
+> 下游（引用我）：[主PRD功能索引](mainprd.md#81-功能分工)；[子PRD索引](README.md)；[验收覆盖台账](acceptance-map.md)。相关功能按下文交接；首批源语[正式TC设计](../06-testcase/tc-main-subtitle-workflow.md)与[实施计划草案](../07-delivery-plans/main-delivery-plan-source-release.md)已建立；实际实现与运行验证未开始，其他业务范围仍待后续承接。
+
+## 1. 范围、入口与需求
+
+从有权主体对真实Task申请素材准备或已确认Task的业务执行开始，到模块结果、等待/停止、恢复交接及可复算运行记录为止。调度控制管执行资格，不代替模块判断、母版/内容确认或交付签发；不新增完整IAM、监控大屏或自动发布能力。
+
+入口为02任务单开工/授权、03处理步骤/停止及各模块的重跑/记录入口。首批接通源语闭环所需执行、共享授权/追踪与控制契约；后续模块复用同一能力，不能因有调用入口就称全部模块已实现。
+
+| 局部需求 | 优先级 | 上游需求 | 本文负责 |
+| --- | --- | --- | --- |
+| REQ-EXEC-01 | P1 | REQ-MAIN-R03 | workflow/module_only执行资格、范围与完成终点 |
+| REQ-EXEC-02 | P0 | REQ-MAIN-R04 | 有权人预授权、撤销与动作执行时真实检查 |
+| REQ-EXEC-03 | P0 | REQ-MAIN-R05 | 准入通过才自动继续，保留人工与候选身份 |
+| REQ-EXEC-04 | P0 | REQ-MAIN-R14 | Run/attempt/step、版本、幂等及结果防重 |
+| REQ-EXEC-05 | P0 | REQ-MAIN-R15 | Task累计预算/重试停止、取消、恢复及晚到事实 |
+| REQ-EXEC-06 | P1 | REQ-MAIN-R19 | 真实事件、成本/人工/等待及指标可复算 |
+| REQ-EXEC-07 | P0 | REQ-MAIN-R14 | 状态/错误/产物定位与按权限追踪 |
+
+R03/04/05/14/15/19由本文主责；主AC各N/E/A原文保留于台账，本文细化7条局部需求，不移动原验收终点。
+
+## 2. 页面操作与反馈
+
+沿用[V3 02任务单](../02-prototype/pages/02-task.html)、[03处理页](../02-prototype/pages/03-processing.html)及其他页记录入口；静态页面只说明状态，不检查真实账号、启动调用或停止服务。
+
+| 操作/区域 | 展示与请求 | 实际响应后的反馈 |
+| --- | --- | --- |
+| 执行方式 | 已确认Task快照、workflow/module_only、所选模块、范围与输出 | 无确认/未就绪定位缺项；不能靠点击直接标IN_PROGRESS |
+| 预授权/逐次确认 | 授权人/主体、任务修订、模块/动作范围、当前状态 | 无权给请求有权人处理入口；授权不能填补材料或质量条件 |
+| 步骤进度 | Run/attempt、每步输入输出、实际开始/结束及错误 | waiting/fail/skip分开；未来步骤显示未执行，不伪造PASS |
+| 停止/取消 | 说明影响范围、在途调用与已有费用，记录理由 | 停新调用/下游；在途不可撤回明示，不把请求当已撤销外部调用 |
+| 恢复/重跑 | 停止原因、已解决依据、预算/权限、影响版本与范围 | 重新检查后只恢复获准范围；不清空原失败、费用和重试历史 |
+| 追踪详情 | 默认任务/版本/模块/产物摘要，按需展开技术记录 | 从产物回查输入/manifest/决定；缺记录报未知，不补假主体/时间 |
+
+请求处理中防重复点击；超时保留同次请求引用并查询真实状态。执行端独立鉴权/控额；按钮隐藏或前端估算不构成权限/预算控制。
+
+## 3. 输入、输出及能力边界
+
+| 输入/输出 | 既有契约 | 约束 |
+| --- | --- | --- |
+| 任务定义 | Task/project_id/task_revision、确认、Media、purpose、范围、module_plan、output_spec | 引用确切已确认快照；当前待启阶段readiness通过，不要求未来阶段假就绪 |
+| 执行方式 | execution_mode=workflow/module_only；execution_policy=manual/preauthorized+authorization_ref | 不把单模块当无任务散调用；task_type仍区分source_only/multilingual |
+| 授权 | Authorization及ReviewDecision；Run.authorization_ref/permission_check_ref | 绑定task_revision、principal、modules/actions、active/revoked；不能泛化到其他任务 |
+| 模块输入 | input_refs/input_revision、目标variant、09产出的上下文/规则manifest | 同项目、可访问、输入及版本有效；候选输入不冒称人工确认稿 |
+| 运行输出 | Run/attempts/steps、output_refs、Candidate/Issue/Validation等 | 每步保留真实actor与输入输出；空输出/非法结构不能SUCCEEDED |
+| 控制/费用 | Run.controls、attempts.usage、Run.usage及cost.reconciled | 同Task跨Run累计、估算/实际分列；未知费用不是0 |
+| 业务投影 | Task状态/readiness、事件、人工活动/等待、Artifact引用 | Run成功不自动Task完成；派生产物状态归07/08及主PRD |
+
+Run、Validation及ReviewDecision必须关联真实Task。创建Task草稿后，仅有权module=ingest素材准备可在母版/Task正式确认前运行；ASR等六模块仍须确认与准入。旧无Task原始收料历史只读，不新建无Task确认/抽轨，不扩展到其他运行或指标执行分母。
+
+## 4. 调度与自动继续
+
+1. 读取确认Task、母版与模块输入，检查项目权限、用途、目标/规则、版本、该阶段readiness与自动准入。
+2. 识别逐次人工执行许可或有效预授权；敏感动作执行前实际校验目标版本与权限并记录permission.checked。
+3. 同Task范围原子检查累计成本/在途预估与停止状态，保留run.stop_checked；不允许两个并发Run各按局部余额独立放行而超用任务预算。
+4. 固定manifest及完整幂等键；复用有效结果或建立Run，实际开始后记run.started；模块内部步骤按其子PRD执行。
+5. 结果校验后保存实际产物与attempt结局；决定等待人工、受限自动继续、失败或停止。交下一步前重新检查授权/输入/准入/预算。
+6. 按任务确认时约定终点判断Task状态；必需人工/校验/产物不齐不得COMPLETED，源语、单模块、多语交付分开。
+
+| 调用方式 | 正常行为 | 不满足时 |
+| --- | --- | --- |
+| workflow | 按module_plan及输入依赖推进；确切不适用才SKIPPED并记录理由 | 未知/deferred不当已完成；阻断定位相应阶段，保留已做工作 |
+| module_only | 仅执行所选受支持模块，接受已授权外部/项目输入，不要求重跑所有上游或强造多语父Task | 仍确认任务/母版与模块前置，缺资料请求补齐，不自动降任务范围 |
+| manual | 当前人工节点/逐次许可后执行约定范围；到下一必需人工节点等待 | 不因之前点过执行而取得全链自动权限 |
+| preauthorized | 仅在scope内、无阻断且有效准入/校验通过时自动继续 | 缺校准、规则、输入、授权或预算均停；未定义准入不默认通过 |
+
+中间候选保持AI_PROPOSED，下游input_refs指向确切Candidate。不得伪造review.decided/HUMAN_APPROVED或未展示的suggestion.shown；Agent只另存候选，不改人工确认/锁定正文。母版、最终内容确认、签发仍须人工，系统不自动发布。
+
+## 5. 授予、撤销与敏感动作
+
+| 动作 | 服务端检查与持久结果 | 未通过时 |
+| --- | --- | --- |
+| 授予预授权 | 核验授予主体真实权限、被授权主体、Task修订、模块/动作scope；保存authorize_execution决定与Authorization | 无授予权或scope不明拒绝，不以owner身份默认全权 |
+| 撤销 | 核验撤销权限；保存revoke_authorization决定，Authorization转revoked并发authorization.revoked | 未成功保存不声称已撤销；错误反馈供有权人重试 |
+| 执行/自动续步/重试 | 重新核验真实principal、权限策略、授权active及准确Task/输入版本 | 拒绝并记录allowed/denied与实际write结果；授权不代替质量检查 |
+| 人工决定/导出/签发 | 使用对应动作权限及确切内容/包版本，内容审核与签发分别检查 | 同页一人可两步完成但不能少检查；具体行为归08/07 |
+
+撤销提交后不得再启动依赖该授权的新敏感动作；已开始且不可取消的外部调用记录在途事实/费用，返回结果隔离留存，不自动采纳、推进或签发。取消后同理。权限检查与启动/写入的竞争需原子保护，不能拿先前缓存的allowed绕过刚发生的撤销。
+
+任务修订变化不沿用旧授权scope；重新确认/检查并由有权人授予相应许可。具体权限等级、可授予动作清单及有效期细则待定，未配置默认拒绝敏感动作，不自动注册全权角色。
+
+## 6. Run、重试、幂等与版本
+
+| 层级 | 记录与规则 |
+| --- | --- |
+| Task | 业务范围/终点及累计控制边界；更换Run不清Task实际费用、在途预估、停止原因与历史 |
+| Run | 模块一次确定配置执行，绑定task_revision/input_refs/manifest；同配置重试保留run_id |
+| attempt | 初次/重试分别追加attempt_no、steps、时间、状态、failure、usage与输出；不得只留最后一次 |
+| step | 实例键(run_id,attempt_no,step_id)，status=pass/fail/skip/waiting；具体actor通过Event回查 |
+| 新配置/人工重跑 | 新建关联Run，可用supersedes_run_id，固定新manifest；原Run和成本保留 |
+| 结果幂等 | schema完整key含Task/修订、模块、片段/范围、输入修订、目标分支、manifest_hash；最多一组有效结果只投递一次 |
+
+相同业务key并发请求应返回既有运行/结果，不多启动收费调用。失败重试留新attempt，不把事件重发算业务重试；失效的旧结果不能重新当有效结果继续下游。
+
+Run状态沿用READY/RUNNING/SUCCEEDED/FAILED/STOPPED/WAITING_HUMAN/SKIPPED；Task沿用主PRD全局状态，不新建“自动通过”枚举。超时先查在途真实状态，不因客户端失联重复执行；晚到结果必须校验取消/撤权/版本及有效结果组后才可交接。
+
+## 7. Task累计成本、停止与恢复
+
+RULE-SUB-004：超过已批准任务预算或连续两次重试即停止，保留原因/产物；无预算或计次策略不启付费自动路线。课件120%停止/15秒超时/退避次数等是未启用参考，不能授权额外超支或绕过总停止条件。
+
+| 条件 | 停止/异常行为 | 恢复前提 |
+| --- | --- | --- |
+| 预算超过/不能核验余额 | 停新收费调用与自动续步，保留已有产物/Task BLOCKED原因；预算未知不当无限 | 费用/任务负责人核对账单、预算及许可，留人工恢复决定后重检 |
+| 连续重试达到底线 | 停自动重试，原失败/次数/配置与产物保留 | 根因解决及有权恢复，不能换模型/新Run/attempt清零规避 |
+| 低置信/规则冲突/缺上下文 | 不重试同配置；转补料/人工/有依据的替代方案 | 新上下文/规则需新manifest及资格；付费扩窗/备用模型仍受预算/计次 |
+| 超时/非法输出/服务失败 | 真实FAILED/STOPPED及错误，后续未执行；不把空输出装成功 | 仅实际retryable且参数已批准、总控制允许才重试；格式修复不是质量通过 |
+| 取消或撤权 | 阻断新敏感动作，记录不可撤回调用及晚到输出，不推进取消Task | 不自动恢复取消Task；后续按主PRD另建关联任务，历史事实保留 |
+| 晚到账单/费用修订 | 按provider_line_id去重/对账并重算Task累计，必要时触发停止；不丢取消/失败费用 | 报告修订保留as_of/缺失/迟到，不能把估算当已结费用 |
+
+Task累计使用以MET-COST-002为准：已结费用加在途预估，账单结算替换对应估算而非双算；共享费用分摊总额不漏不重。跨币种未有批准换算快照则不可判预算合规，不填0。存储/原子控额技术方案待定，累计与并发控制行为必须落实。
+
+初次attempt_no=1、两次重试对应2/3是规则登记中的待评审解释，不能当已批准实现参数；“连续”、跨备用/修复调用、恢复后计次与预算边界须执行前确认。恢复可核对原因、选择范围、重新确认版本/权限/条件并引用resume_decision_ref；不删除旧停止与计数历史。
+
+## 8. 能力接口、追踪与指标
+
+只定义能力，不造HTTP路径/真实工具型号。
+
+| 能力 | 输入 → 输出 | 必需保护 |
+| --- | --- | --- |
+| 申请/查询执行 | Task修订、模块/范围、输入、主体及防重引用 → 运行/结果或缺项/拒绝 | 确认、权限、准入、版本、控额及幂等在执行端检查 |
+| 授予/撤销执行许可 | 准确Task、principal、scope、原因和expected_revision → 决定/Authorization及事件 | 实际授予权校验，未授权不自动继续 |
+| 停止/恢复/重试 | Run/Task、原因、范围、恢复决定及当前版本 → 新状态/attempt或关联Run | Task累计与历史不重置；取消任务不隐式复活 |
+| 查询追踪/统计原始记录 | 项目范围、Task/Run/产物Ref及访问主体 → 步骤、依据、决定、费用和数据缺口 | 有权读取、敏感内容受控引用，不能泄露其他项目 |
+
+事件复用authorization.granted/revoked、permission.checked、run.stop_checked/started/finished及模块/决定/产物事件。event_at/received_at分开，dedup_key防投递重复、idempotency_key防业务重复、operation_id串同次操作；三者不混用。失败、停止、未执行、待回执与未知费用按实记录。
+
+MET-GOV-001/002/003、MET-OPS-001、MET-COST-001/002和适用MET-EFF/REV/OUT按metrics计算。人工活跃/空闲/模型等待/外等分开；7日有效接受未满窗不出正式值。报告留cohort、版本、as_of、迟到/缺失与计算版本；指标达标不解除权限/人工/质量护栏，当前无真实数据不宣称提效。
+
+## 9. 验收、来源与待定
+
+7项局部需求共21类场景，全部NOT_RUN，非正式TC；主台账18项原场景继续继承，不把局部数量等同业务执行。
+
+| 局部场景 | 正常 N（NOT_RUN） | 异常 E（NOT_RUN） | 权限 A（NOT_RUN） |
+| --- | --- | --- | --- |
+| EXEC-01 P1 | 单模块确认且前置齐→仅跑选定范围并按自身终点交接 | 缺输入/不完整多语任务→待补，不自动降范围 | 无该模块执行权→拒绝，不因能看Task而可执行 |
+| EXEC-02 P0 | 有权授予准确scope→实际动作重验后执行 | 撤权与启动并发/在途返回→阻止新动作并隔离晚到结果 | 无授予/撤销权→拒绝，保留真实检查结果 |
+| EXEC-03 P0 | 有效授权且准入通过→中间AI_PROPOSED可继续 | 未定义准入/硬阻断→等待人工，不伪造确认 | 预授权企图改锁定稿或代签最终内容→拒绝 |
+| EXEC-04 P0 | 同key重送→一组有效结果，attempt/step可追 | 超时/配置变化→查询在途或关联新Run，原失败留存 | 跨项目输入/目标版本不符→拒绝调用和写入 |
+| EXEC-05 P0 | 有权恢复且根因解除→重检后只跑获准范围 | 并发Run、取消、晚到账单→累计不丢，超预算/重试即停 | 无恢复权/换Run逃避停止→拒绝继续 |
+| EXEC-06 P1 | 真实事件去重→费用/人工/等待可复算 | 迟到/零分母/未满窗→重算或不可判定，不补0/成功 | 无原始记录读取权→拒绝受限数据导出 |
+| EXEC-07 P0 | 产物→Task/Run/attempt/step/输入/决定可回查 | 缺步骤/失效输入→显示缺口且不冒称完整追踪 | 他项目追踪或敏感正文→拒绝且不暴露存储凭据 |
+
+实现前必须冻结：人员权限与可授予动作/有效期、检查与敏感动作原子边界；预算金额/币种/在途估算和Task累计存取；连续重试/备用/修复计次与恢复后的控制口径；manifest/key规范序列化、调用结果投递原子性、账单分摊/迟到封账；真实工具/超时/恢复接口。未冻结条件不默认放行收费自动路线。
+
+来源核对：参考subprd骨架及07响应记录实际成品的步骤/入出参/失败追溯；课件§4.8、§5.1—5.4；meeting/week2 29:31—38:48、46:13—50:08有关版本、局部兜底及步骤授权，week1 31:33—35:35人工稿保护；work/28、34、35及现行契约/V3。课堂阈值、自动自愈和示例成效不作已实现事实。
+
+## 首批源语落地准备（2026-10-20）
+
+[首批方案](../07-delivery-plans/source-release-solution.md)、[技术契约草案](../03-foundation/source-release-contract.md)、[实施计划草案](../07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](../06-testcase/tc-main-subtitle-workflow.md)。
+
+首批仅收料/任务→转写、核对或对齐→人工源稿审阅→源语导出；174条TC设计全部NOT_RUN，8项实现任务全部阻塞。技术方案及契约是PROPOSED，数据字段仍以schema为权威；采纳扩展须在T0.1先同步权威定义。真实样本、权限、模型/阈值和预算仍待确认；多语模块未纳入本批实现。不把静态检查或合成配方当业务验收。
+
+## 2026-10-21确认：准备执行、审核与交付分权
+
+DRAFT/NEEDS_INPUT任务只允许白名单素材准备ingest动作；其Run成功不推进任务到业务IN_PROGRESS/COMPLETED。草稿确认后保持同一task_id，六模块重新检查确认/输入/规则/授权/停止。编辑提交、内容审核、签发、正式导出分别鉴权，编辑与机器运行权限不包含最终审核/签发权。正式导出前由真人signoff，执行端再检查当前签发/版本与下载权。每步档案沿Run/attempt/step与Event，版本恢复采用经验证且仍有效的组合；未知故障边界由人核对，禁止自动混搭或自修复代码/规则。

@@ -1,0 +1,85 @@
+{
+  "scope": "发布控制演练设计；不新增业务功能需求",
+  "status": "NOT_RUN",
+  "cases": [
+    {
+      "id": "TC-SRC-REL-01",
+      "title": "灰度允许范围与撤回",
+      "requirement_refs": "REQ-MAIN-R03 / R04 / R05",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "隔离项目A/B；主体允许/不允许各一，route和语种题材固定；准备关闭、开启、撤回三种配置修订",
+      "steps": [
+        "关闭时申请新任务；只开启A的指定任务/语种/题材/route，再以未列入的各对照申请；撤回后重新申请并模拟旧配置缓存"
+      ],
+      "expected": "只有名单和全部范围条件匹配且有业务权限者进入；关闭/撤回后执行端拒绝新调用，不能靠缓存或直接API绕过，原数据不删除"
+    },
+    {
+      "id": "TC-SRC-REL-02",
+      "title": "触发阻断与在途结果隔离",
+      "requirement_refs": "REQ-MAIN-R05 / R15 / R17",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "获准试点版本；各准备一个在途Run和未领取任务，Mock晚到输出；另准备可控导出差异或越权故障",
+      "steps": [
+        "在隔离环境注入故障并按已定停止条件触发处置；关闭受影响入口/领取；返回在途输出并请求下步"
+      ],
+      "expected": "新调用和状态推进停止，原确认稿不覆盖；晚到结果隔离且原Task成本保留；影响范围不明时整个试点保持关闭，责任人可定位故障"
+    },
+    {
+      "id": "TC-SRC-REL-03",
+      "title": "系统回退兼容与不兼容分支",
+      "requirement_refs": "REQ-MAIN-R14 / R15",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "两组版本清单old/new；数据副本各准备兼容及不兼容schema/文件；原Run固定new manifest；另备已过期/撤回规则或许可，以及未验证的旧代码+新规则组合。",
+      "steps": [
+        "停止新调用并备份；在副本检查old读取当前数据，分别演练兼容切换、不兼容拒绝和首版无old；检查旧worker返回",
+        "在隔离环境分别申请恢复上述失效/未验证组合，核对实际拒绝及无可用组合时关闭/人工接手。"
+      ],
+      "expected": "兼容时新请求绑定old且原Run仍引用new；不兼容不破坏性降级，无old则关闭转人工；旧worker不推进，新旧输出/费用可回查；补充：旧规则/profile或许可已过期/撤回、旧代码与新规则组合未经验证，均不得直接重新启用；历史可回查，无可用组合关闭自动能力并交人工。"
+    },
+    {
+      "id": "TC-SRC-REL-04",
+      "title": "一致性备份恢复与失败分支",
+      "requirement_refs": "REQ-MAIN-R13 / R14 / R15 / R16 / R17",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "隔离沙箱内有效备份及manifest；备份后新增人工决定/调用记录；另复制一份损坏或缺文件的备份",
+      "steps": [
+        "分别恢复到独立沙箱；核对数据库与文件hash/决定/版本，列出恢复点后差额并核对费用；对损坏备份尝试恢复"
+      ],
+      "expected": "有效备份可核验且差额可对账，未核实调用不重发；损坏/不完整恢复不得替换工作数据或重新开放，不丢掉备份后的人工决定/费用"
+    },
+    {
+      "id": "TC-SRC-REL-05",
+      "title": "回退后验证与受控恢复",
+      "requirement_refs": "REQ-MAIN-R04 / R11 / R15 / R17",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "入口关闭且已恢复的隔离版本，具备运行/恢复权主体及无恢复权对照；必要回归结果分别设真实失败/未执行/通过的执行记录",
+      "steps": [
+        "在各结果分支提交恢复申请；无权者和服务主体尝试越权；有权人核对实际证据后只重开指定范围，完成一笔源稿人审导出"
+      ],
+      "expected": "回归失败/缺证据或权限不足不能开放；有效恢复只开放明确范围，最终人审未被代签，文件解析/追踪一致；不得把手工伪造PASS当结果"
+    },
+    {
+      "id": "TC-SRC-REL-06",
+      "title": "观察与扩量条件",
+      "requirement_refs": "REQ-MAIN-R04 / R15 / R19",
+      "source": "docs/07-delivery-plans/main-delivery-plan-source-release.md#rollout",
+      "implementation_task": "T4.1",
+      "status": "NOT_RUN",
+      "fixture": "独立模拟批次，固定cohort/as_of；分别缺数量上限/窗口/阈值，观察未满、零分母、指标超限及有效通过；扩大到新语种另缺评测",
+      "steps": [
+        "分别计算并查看真实原始事件；未获批准主体请求扩量；补全合格证据后由有权人明确批准新名单，检查旧失败批次仍存在"
+      ],
+      "expected": "缺参数/观察不足/超限/零有效样本/无权不扩量；新语种无真实评测不得开放；合格分支仅扩大批准范围，原失败与未知指标不被抹掉"
+    }
+  ]
+}

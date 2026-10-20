@@ -6,6 +6,7 @@
 <section class="panel"><div class="panel-head"><h2>A · 本次输入</h2><span class="tag tag-ok">开工条件已确认 · 状态示例</span></div>
 <div class="field-grid"><div class="field"><b>作品 / 母版</b><p>《示例短剧》EP01<br>MEDIA-DEMO-001 · 母版 v1</p></div><div class="field"><b>任务单</b><p>JOB-DEMO-001 · 修订 1<br>源语字幕任务 · zh-CN</p></div><div class="field"><b>范围 / 声音</b><p>00:00—01:00<br>母版指定声音 · 可用性已确认</p></div><div class="field"><b>交接目标</b><p>源语文字与时间轴候选<br>交人工回听审阅，尚非终稿</p></div></div>
 <p class="side-note">不因“上传完成”自动开工。实际启动还须有已批准的工具、预算及计次配置；此处假设就绪以展示处理界面，不表示这些参数已经配置。</p>
+<details><summary>逐次复核 / 已预授权时如何继续？</summary><p>默认候选交人审阅。有权人员已对本任务预授权，且阶段准入、输入、校验和停止检查通过时，可将指定候选交下一模块；候选仍为机器结果，不标人工已确认。缺声音、无有效质量依据或有未决问题时停在对应步骤，请求补充/审阅；没有权限时回任务单请求授权。母版、最终审稿及签发仍由人确认。</p><p>Run、attempt和step记录可回查本次读取、处理、输出及失败，引用保留版本。单独调用本模块也使用同一套任务和检查。</p></details>
 <div class="form-actions"><a class="button secondary" href="02-task.html">返回任务单</a><a class="button primary" href="#running">查看开始后的状态</a></div></section>
 <section class="panel"><h2>B · 按任务单选择处理路线</h2><div class="grid-two"><div class="state-card"><span class="tag tag-neutral">路线一 · 新转写</span><h3>没有可用源字幕</h3><p>声音 → ASR 识别 → 片段整理 / 对齐 → 候选。</p><a href="#running">查看处理稿 →</a></div><div class="state-card"><span class="tag tag-neutral">路线二 · 已有字幕</span><h3>核对与对齐</h3><p>声音 + 已有字幕 → 核对 / 对齐 → 差异候选。保留原字幕，不强制全量重做 ASR。</p><a href="#existing">查看已有字幕结果 →</a></div></div></section>
 <section class="panel" id="running"><div class="panel-head"><h2>C · 处理中</h2><span class="tag tag-warn">IN_PROGRESS</span></div>

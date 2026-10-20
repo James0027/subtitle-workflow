@@ -1,0 +1,63 @@
+{
+  "purpose": "正式TC的数据准备配方，不是已存在的真实媒体/数据库；所有身份、声音和模型响应均为合成/模拟",
+  "namespace": "每次执行分配TEST_RUN_ID；项目/文件/事件均隔离到该测试沙箱",
+  "input_recipe": {
+    "project_A": "测试主项目",
+    "project_B": "跨项目拒绝对照",
+    "media_duration_ms": 6000,
+    "frame_rate": {
+      "numerator": 25,
+      "denominator": 1
+    },
+    "range": {
+      "mode": "whole"
+    },
+    "synthetic_contract_locale": "zh-CN",
+    "synthetic_contract_output": "srt",
+    "locale_and_format_scope": "只用于本合成中文文本的契约测试，不代表已确认首批真实语种/输出；REAL_TOOL必须用D02批准范围",
+    "source_lines": [
+      {
+        "start_ms": 0,
+        "end_ms": 2000,
+        "text": "我没有同意。"
+      },
+      {
+        "start_ms": 2100,
+        "end_ms": 4000,
+        "text": "明天十点见。"
+      }
+    ]
+  },
+  "actors_recipe": {
+    "human_allowed": "通过可信测试鉴权注入本条所需动作的真人主体；不能由请求body自报角色",
+    "human_denied": "相同项目但明确缺本条动作权限；其他前置保持齐备",
+    "human_partial": "批量只可处理s1，不可处理s2；预览后撤销s2权限的变体分别执行",
+    "reviewer_only": "有内容审阅权、无当前包签发权",
+    "service_actor": "运行/候选权限，无人工确认/签发权",
+    "outsider": "项目B主体，无A对象读取权"
+  },
+  "prepare_via_capabilities": "用有权操作建立Task草稿→素材准备/抽轨→母版确认→同ID的Task确认→所需候选/人工稿；按场景停在所需状态，不直接注入task_status/HUMAN_APPROVED/PASS等计算结果",
+  "mock_variants": [
+    "正常两个片段",
+    "EMPTY_RESULT",
+    "TIMEOUT",
+    "INVALID_SCHEMA",
+    "部分结果/未覆盖",
+    "语义删否定",
+    "alignment回退旧时间/缺词时间",
+    "撤权后晚到结果"
+  ],
+  "pending_parameters": {
+    "real_media_rights": null,
+    "source_locale": null,
+    "model_and_weights": null,
+    "audio_calibration": null,
+    "budget_B": null,
+    "currency": null,
+    "retry_policy": null,
+    "output_profile": null
+  },
+  "budget_boundaries": "B-epsilon/B/B+epsilon为批准参数的符号边界，不是本轮设定的金额；B/币种/计次未明确前相关用例保持NOT_RUN并标前置未齐",
+  "cleanup": "只删除或归档TEST_RUN_ID对应隔离夹具，执行前核对绝对路径位于本次沙箱；不得重置真实素材、人工稿或其他测试运行",
+  "media_recipe": "实施后用获准的合成媒体工具或授权短样本准备6秒视频/声音；当前没有媒体字节/音频金标，不以SRT文本冒充ASR金标"
+}

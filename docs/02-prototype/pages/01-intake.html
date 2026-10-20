@@ -7,12 +7,12 @@
 <div class="page-head"><div><p class="eyebrow">01 / 素材入库 · 媒资工程</p><h1>收齐材料，确认这次使用的母版</h1><p class="muted">《示例短剧》EP01 · 设计示例；文件、检查及确认记录均为构造数据。</p></div><span class="tag tag-warn">待确认母版</span></div>
 <div class="callout">这是逐状态交互稿：按钮跳到对应状态示例，不会真实上传、读取或检测文件。素材登记后仍需核对母版、确认任务单，才能判断是否开工。</div>
 <section class="panel" id="receive">
-<div class="panel-head"><h2>A · 接收素材包</h2><span class="tag tag-neutral">状态 1：尚未登记</span></div>
+<div class="panel-head"><h2>A · 创建任务草稿并接收素材</h2><span class="tag tag-neutral">状态 1：尚未登记</span></div>
 <div class="field-grid">
 <label class="field">作品<input value="示例短剧" readonly></label><label class="field">集数<input value="EP01" readonly></label>
 <label class="field">提供方标注版本<input value="剪辑 v1（示例）" readonly></label><label class="field">来源与使用权限<input value="示例授权记录 RIGHTS-DEMO-001 · 待媒资核实" readonly></label>
 </div>
-<div class="state-card"><h3>视频及配套文件</h3><div class="upload-zone"><strong>将本集视频和配套文件放在这里</strong><p class="muted">视频 / 独立音轨 / 已有字幕 / 脚本；选择文件控件仅示意。</p><button type="button" disabled>选择文件（原型占位）</button></div><p>可接收视频、独立音轨、已有字幕、脚本，也可补充角色表和术语表。</p><p class="muted">可将多个文件归到同一集；仅有文档不构成可转写素材。当前页面不提供真实文件选择器。</p><a class="button secondary" href="#registered">查看“选择文件并登记”后的状态</a></div>
+<div class="state-card"><h3>视频及配套文件</h3><div class="upload-zone"><strong>将本集视频和配套文件放在这里</strong><p class="muted">视频 / 独立音轨 / 已有字幕 / 脚本；选择文件控件仅示意。</p><button type="button" disabled>选择文件（原型占位）</button></div><p>先创建真实任务草稿 JOB-DEMO-001，再接收视频、独立音轨、字幕和脚本；抽轨与检查关联该ID，之后确认母版/任务仍不换号。草稿阶段不启动ASR。</p><p class="muted">可将多个文件归到同一集；仅有文档不构成可转写素材。当前页面不提供真实文件选择器。</p><a class="button secondary" href="#registered">查看“选择文件并登记”后的状态</a></div>
 <p class="side-note">无独立音轨时，可以使用视频中的声音；字幕、脚本缺失分别登记，不一律阻断。</p>
 </section>
 <section class="panel" id="registered">
@@ -28,6 +28,15 @@
 </section>
 <section class="panel" id="master">
 <div class="panel-head"><h2>C · 核对并确认母版</h2><span class="tag tag-warn">状态 3：人工核对</span></div>
+<div class="state-card"><h3>内容资料 · 随母版关联</h3>
+<div class="field-grid">
+<label class="field">题材<input value="待确认 · 由素材提供方或任务负责人补充" readonly></label>
+<label class="field">内容形式<input value="真人 / 动画 / 其他 · 待确认" readonly></label>
+<label class="field">原内容评级<input value="待确认 · 无评级资料时保留未知" readonly></label>
+<label class="field">对白密度<input value="未检测 · 不由用户估填数值" readonly></label>
+</div>
+<p class="muted">题材、内容形式及原内容评级保留资料来源，由人核实；对白密度检测后记录测量方法与版本，未检测保持未知。以上均为字段示例，不代表已取得真实内容资料。</p>
+<p class="side-note">任务单引用本母版的内容资料，不重复填写。原内容评级不能代替目标市场评级；资料缺失按影响阶段判断，不统一阻断源语转写，也不能据未知资料认定已满足文化或平台要求。</p></div>
 <div class="grid-two"><div>
 <div class="subtitle-preview"><p>视频预览区</p><strong>《示例短剧》EP01 · 剪辑 v1</strong><p class="muted">设计占位，无真实视频播放。</p></div>
 <div class="field-grid"><label class="field">母版视频<input value="EP01_cut_v1.mp4" readonly></label><label class="field">本次声音来源<input value="从该视频提取 · 派生另存" readonly></label></div>
