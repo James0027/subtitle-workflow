@@ -1,0 +1,115 @@
+{
+  "scope": "SIMULATED isolated DB and mocked provider; no cloud calls",
+  "database": "D:\\James\\工作\\快手实习\\subtitle-project\\subtitle-workflow\\docs\\08-test-reports\\20261022\\mock-fixtures-69a86fb3\\review.db",
+  "network_calls": 0,
+  "A_http": 200,
+  "A_body": {
+    "status": "AI_PROPOSED",
+    "transcript_id": "tr_75121aba5b26",
+    "revision": 1,
+    "utterances_count": 1,
+    "speakers_count": 0,
+    "operations": [],
+    "manifest": {
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_hash": "8376fa1325ee463dd1f704cb2265d6834ac5e0d1813757f0000a7dab8470c816",
+      "run_id": "run_cleanup_71aee489e5e9",
+      "is_simulated": false,
+      "usage": {
+        "totalTokenCount": 0,
+        "is_mock": true
+      }
+    }
+  },
+  "A_audio_parts": 3,
+  "A_all_three_composite_texts": true,
+  "source_confirm_http": 200,
+  "BC_http": 200,
+  "BC_body": {
+    "status": "AI_PROPOSED",
+    "task_id": "TASK-20261022-65E5FF37",
+    "source_revision": 1,
+    "target_language": "es-MX",
+    "target_market": "MX",
+    "translations_count": 1,
+    "issues_count": 1,
+    "blocking_issues_count": 0,
+    "qe_status": "未评估",
+    "check_failure": null,
+    "manifest": {
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_hash": "eca3123f57e88591a3d891fea93671f71ecdc72dd509bdb6255a03ae8a4cfa40",
+      "run_id": "run_trans_078d5321feba",
+      "target_market": "MX",
+      "is_simulated": false,
+      "usage": {
+        "totalTokenCount": 0,
+        "is_mock": true
+      }
+    }
+  },
+  "BC_calls": 2,
+  "translation_edit_http": 200,
+  "translation_lock_http": 200,
+  "locked_edit_http": 409,
+  "rollback_http": 200,
+  "rollback_body": {
+    "status": "AI_PROPOSED",
+    "unit_id": "u1",
+    "revision": 3,
+    "restored_from_revision": 1,
+    "text": "Texto de prueba."
+  },
+  "semantic_findings": [
+    {
+      "check_id": "chk_model_09af3a7b",
+      "task_id": "TASK-20261022-65E5FF37",
+      "unit_id": "u1",
+      "translation_id": "tr_trans_efa4502f8be5",
+      "category": "omission",
+      "severity": "WARN",
+      "source_span": null,
+      "target_span": null,
+      "evidence_refs": "[\"u1\"]",
+      "detail": "SIMULATED semantic finding",
+      "suggestion": null,
+      "uncertainty": null,
+      "status": "OPEN",
+      "created_at": "2026-10-21T20:47:42.644Z"
+    }
+  ],
+  "C_failure_http": 200,
+  "C_failure_body": {
+    "status": "CHECK_FAILED",
+    "task_id": "TASK-20261022-65E5FF37",
+    "source_revision": 1,
+    "target_language": "es-MX",
+    "target_market": "MX",
+    "translations_count": 1,
+    "issues_count": 1,
+    "blocking_issues_count": 1,
+    "qe_status": "未评估",
+    "check_failure": {
+      "http_status": 503,
+      "message": "语义检查服务未完成，请恢复后重新检查"
+    },
+    "manifest": {
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_hash": "eca3123f57e88591a3d891fea93671f71ecdc72dd509bdb6255a03ae8a4cfa40",
+      "run_id": "run_trans_291cf6586bcc",
+      "target_market": "MX",
+      "is_simulated": false,
+      "usage": {
+        "totalTokenCount": 0,
+        "is_mock": true
+      }
+    }
+  },
+  "C_failure_blocks": [
+    {
+      "severity": "BLOCK",
+      "detail": "Task C 语义模型检查接口返回异常 (HTTP 503)，保留候选供人工核查"
+    }
+  ],
+  "passed": true
+}
