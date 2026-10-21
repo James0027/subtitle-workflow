@@ -1,0 +1,4 @@
+isolated-import.db*
+isolated-tests/
+pytest-tmp/
+__pycache__/

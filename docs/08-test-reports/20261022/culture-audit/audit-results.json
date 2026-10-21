@@ -1,0 +1,12 @@
+{
+  "historical_tests_exit_code": 0,
+  "cloud_calls": 0,
+  "unknown_input_field_accepted": true,
+  "fabricated_evidence_p0_retained": true,
+  "fabricated_case_reference_accepted": true,
+  "unauthenticated_nonexistent_task_check_status": 200,
+  "test_mode": true,
+  "production_route_mounted": false,
+  "history_reconstructed_from_disk": true,
+  "new_gemini_dispatch": "not accepted: host approval policy never; precondition pending"
+}
