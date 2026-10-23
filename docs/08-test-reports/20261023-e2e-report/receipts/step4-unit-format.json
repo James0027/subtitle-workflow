@@ -1,0 +1,239 @@
+{
+  "receipt": "step4-unit-format",
+  "generated_at": "2026-10-23T05:59:47+00:00",
+  "manifest": {
+    "schema_version": "1.0.0",
+    "conversion_policy_ref": "conversion-policy:2026-10-22.1",
+    "conversion_policy_version": "2026-10-22.1",
+    "target_market": "MX",
+    "target_language": "es-MX",
+    "pipeline": "two_stage_deterministic_first",
+    "stage1_entity_scan": "regex_rules",
+    "stage2_context_classifier": "deterministic_rules_only",
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "latency_ms": 2,
+    "entity_count": 6,
+    "candidate_count": 6,
+    "entity_type_counts": {
+      "distance": 1,
+      "temperature": 2,
+      "numeric_code": 1,
+      "record": 1,
+      "money": 1
+    },
+    "skipped_unit_ids": [],
+    "skipped_unit_count": 0,
+    "reverse_verification": "ENFORCED",
+    "currency_fx": "FORBIDDEN",
+    "auto_apply_allowed_count": 2,
+    "manual_decision_required_count": 4,
+    "trusted_input": {
+      "task_revision": 1,
+      "translation_revision": "src1:u101=1,u102=1,u103=1,u104=1,u105=1,u106=1",
+      "content_hash": "3bb43abef55e3bb53af9e11e361326780d4b81dc1174ea98a718a7a15dde9660"
+    },
+    "mode": "rules_only",
+    "input_char_budget": 20000
+  },
+  "step": "度量衡本地化（两段式确定性换算 + 剧情例外）",
+  "task_id": "TASK-20261023-8BDBFA59",
+  "http_status": 200,
+  "case_normal_conversion": {
+    "distance_26_2_miles": {
+      "candidate": {
+        "candidate_id": "u101-c001",
+        "unit_id": "u101",
+        "entity_id": "u101-e001",
+        "entity_type": "distance",
+        "candidate_kind": "unit_change",
+        "raw_text": "26.2 miles",
+        "raw_value": "26.2",
+        "raw_unit": "miles",
+        "target_value": 42.0,
+        "target_unit": "km",
+        "display_text": "42 km (原值: 26.2 miles)",
+        "suggested_text": "42 km",
+        "conversion_factor": 1.609344,
+        "conversion_formula": "km = mile × 1.609344",
+        "conversion_formula_version": "2026-10-22.1",
+        "rounding_policy": "integer",
+        "raw_currency_code": null,
+        "target_currency_code": null,
+        "reverse_verification": {
+          "performed": true,
+          "passed": true,
+          "tolerance": 0.01,
+          "residual": 0.0,
+          "formula": "km = mile × 1.609344；反向验算 |42.164813 × 1.609344⁻¹ − 26.2| = 0.000000000 < 0.01；参考交叉 |42.164813 − 26.2 × 1.609344| = 0.000000000 < 0.01"
+        },
+        "status": "AI_PROPOSED",
+        "plot_exception": false,
+        "exception_reason": null,
+        "auto_apply_allowed": true,
+        "rationale": "目标市场 es-MX 使用公制：km = mile × 1.609344；已通过乘法反向验算与参考常数交叉验算，按 integer 舍入；原值 26.2 miles 保留。",
+        "evidence": {
+          "raw_text": "26.2 miles",
+          "raw_value": "26.2",
+          "raw_unit": "miles",
+          "span": {
+            "start": 27,
+            "end": 37
+          },
+          "context_flags": [],
+          "conversion_policy_ref": "conversion-policy:2026-10-22.1",
+          "conversion_policy_version": "2026-10-22.1",
+          "source": "deterministic_python",
+          "formula": "km = mile × 1.609344",
+          "factor": 1.609344,
+          "reference_factor": 1.609344,
+          "rounding_policy": "integer",
+          "reverse_check": "km = mile × 1.609344；反向验算 |42.164813 × 1.609344⁻¹ − 26.2| = 0.000000000 < 0.01；参考交叉 |42.164813 − 26.2 × 1.609344| = 0.000000000 < 0.01"
+        }
+      },
+      "independent_reverse_verification": {
+        "raw": 26.2,
+        "factor": 1.609344,
+        "exact_target": 42.1648128,
+        "formula": "|(26.2 × 1.609344) × 1.609344^-1 − 26.2|",
+        "residual": 0.0,
+        "tolerance": 0.01,
+        "passed": true,
+        "module_target_value": 42.0,
+        "rounding_quantum": 0.16481279999999998
+      },
+      "display_rounding": {
+        "displayed_value": 42.0,
+        "exact_value": 42.1648128,
+        "display_text": "42 km (原值: 26.2 miles)",
+        "rounding_policy": "integer",
+        "quantum_in_target_unit": 0.16481279999999998,
+        "quantum_in_raw_unit": 0.10240992603197326,
+        "note": "反向验算契约绑定未舍入精确值（PRD 硬要求）；界面展示值另受舍入策略约束，两者不得混用——用展示值回推原值必然带 0.5 个目标单位的舍入残差",
+        "raw_unit": "miles"
+      }
+    },
+    "temperature_70_f": {
+      "candidate": {
+        "candidate_id": "u102-c001",
+        "unit_id": "u102",
+        "entity_id": "u102-e001",
+        "entity_type": "temperature",
+        "candidate_kind": "unit_change",
+        "raw_text": "70 degrees Fahrenheit",
+        "raw_value": "70",
+        "raw_unit": "degrees Fahrenheit",
+        "target_value": 21.0,
+        "target_unit": "°C",
+        "display_text": "21 °C (原值: 70 degrees Fahrenheit)",
+        "suggested_text": "21 °C",
+        "conversion_factor": null,
+        "conversion_formula": "°C = (70 − 32) × 5 / 9",
+        "conversion_formula_version": "2026-10-22.1",
+        "rounding_policy": "integer",
+        "raw_currency_code": null,
+        "target_currency_code": null,
+        "reverse_verification": {
+          "performed": true,
+          "passed": true,
+          "tolerance": 0.05,
+          "residual": 0.0,
+          "formula": "°C = (70.0 − 32) × 5 / 9 = 21.111111；反向验算 |21.111111 × 9 / 5 + 32 − 70.0| = 0.000000000 < 0.05"
+        },
+        "status": "AI_PROPOSED",
+        "plot_exception": false,
+        "exception_reason": null,
+        "auto_apply_allowed": true,
+        "rationale": "日常气温按 F→°C 确定性换算，integer 舍入，已通过温度反向验算，待人工裁定。",
+        "evidence": {
+          "raw_text": "70 degrees Fahrenheit",
+          "raw_value": "70",
+          "raw_unit": "degrees Fahrenheit",
+          "span": {
+            "start": 11,
+            "end": 32
+          },
+          "context_flags": [],
+          "conversion_policy_ref": "conversion-policy:2026-10-22.1",
+          "conversion_policy_version": "2026-10-22.1",
+          "source": "deterministic_python",
+          "source_scale": "fahrenheit",
+          "formula": "°C = (70 − 32) × 5 / 9",
+          "rounding_policy": "integer",
+          "fever_range": false,
+          "reverse_check": "°C = (70.0 − 32) × 5 / 9 = 21.111111；反向验算 |21.111111 × 9 / 5 + 32 − 70.0| = 0.000000000 < 0.05"
+        }
+      },
+      "independent_reverse_verification": {
+        "raw": 70.0,
+        "exact_target": 21.11111111111111,
+        "formula": "|((70.0 − 32) × 5/9) × 9/5 + 32 − 70.0|",
+        "residual": 0.0,
+        "tolerance": 0.01,
+        "passed": true,
+        "module_target_value": 21.0,
+        "rounding_quantum": 0.11111111111111072
+      },
+      "display_rounding": {
+        "displayed_value": 21.0,
+        "exact_value": 21.11111111111111,
+        "display_text": "21 °C (原值: 70 degrees Fahrenheit)",
+        "rounding_policy": "integer",
+        "quantum_in_target_unit": 0.11111111111111072,
+        "quantum_in_raw_unit": null,
+        "note": "反向验算契约绑定未舍入精确值（PRD 硬要求）；界面展示值另受舍入策略约束，两者不得混用——用展示值回推原值必然带 0.5 个目标单位的舍入残差",
+        "raw_unit": "°F"
+      }
+    },
+    "assertion": "|target × factor^-1 − raw| < 0.01 且 |target × 9/5 + 32 − raw| < 0.01",
+    "result": "PASS"
+  },
+  "case_plot_exception_locks": {
+    "fever_102f": {
+      "status": "MANUAL_DECISION_REQUIRED",
+      "exception_reason": "PLOT_FEVER_TEMPERATURE",
+      "context_flags": [
+        "FEVER_RANGE",
+        "FEVER_CONTEXT"
+      ],
+      "auto_apply_allowed": false,
+      "display_text": "38.9 °C (原值: 102 degrees Fahrenheit)"
+    },
+    "numeric_code_1234": {
+      "status": "MANUAL_DECISION_REQUIRED",
+      "exception_reason": "PLOT_NUMERIC_CODE",
+      "target_value": null,
+      "suggested_text": null,
+      "display_text": "1234（原值锁定，禁止机器自动替换）"
+    },
+    "record_9_58s": {
+      "status": "MANUAL_DECISION_REQUIRED",
+      "exception_reason": "PLOT_RECORD_VALUE",
+      "target_value": null,
+      "display_text": "9.58（原值锁定，禁止机器自动替换）"
+    },
+    "money_500_usd": {
+      "status": "MANUAL_DECISION_REQUIRED",
+      "exception_reason": "PLOT_CURRENCY_NO_FX",
+      "conversion_factor": null,
+      "raw_currency_code": "USD",
+      "target_currency_code": "USD",
+      "target_value": 500.0,
+      "display_text": "USD 500.00 (原值: 500 dollars)"
+    },
+    "result": "ALL_LOCKED"
+  },
+  "not_written_back": {
+    "check": "候选人选不写入人工确认稿",
+    "before": {
+      "u101": "La carrera completa fue de 26.2 miles.",
+      "u102": "Afuera hay 70 degrees Fahrenheit.",
+      "u103": "Tiene fiebre de 102 degrees Fahrenheit.",
+      "u104": "El código de la caja fuerte es 1234.",
+      "u105": "El récord mundial es 9.58s.",
+      "u106": "Me costó 500 dollars."
+    }
+  },
+  "boundary": "换算为确定性 Python 计算；PROCESSED/SKIPPED 计数真实，无模型调用"
+}

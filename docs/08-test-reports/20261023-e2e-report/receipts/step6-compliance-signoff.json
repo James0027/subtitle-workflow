@@ -1,0 +1,127 @@
+{
+  "receipt": "step6-compliance-signoff",
+  "generated_at": "2026-10-23T05:59:49+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "step": "平台合规质检与数字签发",
+  "task_id": "TASK-20261023-967C6F2F",
+  "case_real_registry_fail_closed": {
+    "http_status": 409,
+    "detail": "正式市场规则仍待核验，暂不能签发交付",
+    "note": "生产规则库无 VERIFIED/ACTIVE 条目时的真实行为"
+  },
+  "case_zero_duration_gate": {
+    "http_status": 409,
+    "detail": "缺少有效字幕时间边界，不能伪造时间",
+    "note": "非正时长在取确认对话阶段即被拒（fail-closed），比 QC 更早，不允许伪造时间"
+  },
+  "case_negative_duration_validator": {
+    "issues": [
+      "DURATION_INVALID"
+    ],
+    "level": "handler-level validate_platform_profile",
+    "result": "DURATION_INVALID"
+  },
+  "case_qc_failed_block_and_leak_protection": {
+    "http_status": 200,
+    "status": "QC_FAILED",
+    "issues": [
+      {
+        "issue_type": "TIMECODE_OVERLAP",
+        "cue_index": 2,
+        "message": "第 2 条开始时间 2.100s 早于上一条结束时间 2.500s（重叠 400ms）",
+        "details": {
+          "policy_version": "2026-10-22.1",
+          "rule_id": "RULE-ORAL-001",
+          "profile": "netflix_timed_text",
+          "observed": -0.4,
+          "threshold": ">= 0",
+          "previous_index": 1
+        }
+      }
+    ],
+    "content_in_response": false,
+    "stored_content_empty": true,
+    "download_http_status": 403,
+    "download_detail": "产物尚未真人签发，禁止下载",
+    "signoff_on_qc_failed_status": 409,
+    "machine_signoff_http_status": 403,
+    "machine_signoff_detail": "只有有权真人审阅员可以签发",
+    "result": "QC_FAILED + 物理防泄漏"
+  },
+  "case_tamper_five_dimension_hash": {
+    "dims": {
+      "task_id": {
+        "rejected": true,
+        "error_type": "SignoffError",
+        "message": "SIGNOFF_HASH_INVALID: 五维要素与签发哈希不符（任务/译文修订/规则版本/校验标识/文件 hash 任一被改动；computed=0bab5141eaf1b80d9e265df5fc666e1ffac4a445bf27cfed98219127f63ac9ba）"
+      },
+      "translation_revision": {
+        "rejected": true,
+        "error_type": "SignoffError",
+        "message": "SIGNOFF_REVISION_MISMATCH: 签发绑定 translation_revision='src1:u301=99'，产物 manifest 声明为 'src1:u301=1,u302=1,u303=1'（五维要素未绑定产物事实）"
+      },
+      "rule_version": {
+        "rejected": true,
+        "error_type": "SignoffError",
+        "message": "SIGNOFF_RULE_MISMATCH: 签发绑定 rule_version='compliance-policy:0.0.0'，产物 manifest 声明为 'compliance-policy:2026-10-22.1'（五维要素未绑定产物事实）"
+      },
+      "validation_id": {
+        "rejected": true,
+        "error_type": "SignoffError",
+        "message": "SIGNOFF_VALIDATION_MISMATCH: 签发绑定 validation_id='val_forged'，当前包为 'val-19e7fb683af6'（旧结论不能签新包）"
+      },
+      "artifact_sha256": {
+        "rejected": true,
+        "error_type": "SignoffError",
+        "message": "SIGNOFF_ARTIFACT_MISMATCH: 签发绑定文件 hash=ccdd35168ab474fa5764a526cfb83621351e23682c5075b2e18d56bddf96aa30，当前包为 5887c49fb2c1e307c2782d0d3b54f3557ba8f79a070f3345f18c003a47724886"
+      }
+    },
+    "result": "ALL_REJECTED"
+  },
+  "case_human_signoff_and_export": {
+    "operator_signoff_status": 403,
+    "signed_status": "PUBLISH_READY",
+    "package_status": "PUBLISH_READY",
+    "signer_id": "op_a5be737f",
+    "signoff_hash": "d339c6ffa120fb14440dd9826253c552af64ea96f02c4f33694a7f4a197ee48f",
+    "artifact_sha256": "5887c49fb2c1e307c2782d0d3b54f3557ba8f79a070f3345f18c003a47724886",
+    "content_sha256_recomputed": "5887c49fb2c1e307c2782d0d3b54f3557ba8f79a070f3345f18c003a47724886",
+    "profile_used": "netflix_timed_text",
+    "round_trip_result": {
+      "is_valid": true,
+      "format": "srt",
+      "cue_count": 3,
+      "discrepancies": [],
+      "status": "VALIDATED"
+    },
+    "srt_export": "docs\\08-test-reports\\20261023-e2e-report\\exports\\artifact-9451afca6f2a.srt",
+    "vtt_export": "docs\\08-test-reports\\20261023-e2e-report\\exports\\artifact-0f9f8d3043bc.vtt",
+    "srt_content": "1\n00:00:00,000 --> 00:00:02,000\nLlegamos a Ayacucho.\n\n2\n00:00:02,100 --> 00:00:04,100\nEl pueblo está muy tranquilo.\n\n3\n00:00:04,200 --> 00:00:06,600\nMañana empiezan las obras del camino.\n",
+    "vtt_content": "WEBVTT\n\n1\n00:00:00.000 --> 00:00:02.000\nLlegamos a Ayacucho.\n\n2\n00:00:02.100 --> 00:00:04.100\nEl pueblo está muy tranquilo.\n\n3\n00:00:04.200 --> 00:00:06.600\nMañana empiezan las obras del camino.\n",
+    "independent_srt_reparse": {
+      "cue_count": 3,
+      "expected_count": 3,
+      "mismatches": [],
+      "match_rate": 1.0,
+      "passed": true
+    },
+    "independent_vtt_reparse": {
+      "cue_count": 3,
+      "expected_count": 3,
+      "mismatches": [],
+      "match_rate": 1.0,
+      "passed": true
+    },
+    "re_signoff_status": 409,
+    "forged_revision_status": 409,
+    "result": "PUBLISH_READY + 100% 对账"
+  },
+  "boundary": "规则解析器为受控 SIMULATED 规则（生产规则库未核验）；文化/翻译运行记录为受控夹具，不代表模型质量"
+}

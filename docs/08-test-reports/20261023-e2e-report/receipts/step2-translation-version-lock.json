@@ -1,0 +1,80 @@
+{
+  "receipt": "step2-translation-version-lock",
+  "generated_at": "2026-10-23T05:59:47+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "step": "初翻与版本锁（上下文消歧 / 锁词 / 乐观锁）",
+  "task_id": "TASK-20261023-DD6A5D13",
+  "case_success_locked_term": {
+    "registered_term": {
+      "item_id": "k_9d141c9cc17e",
+      "source_text": "阿亚库乔",
+      "target_text": "Ayacucho",
+      "is_locked": true
+    },
+    "retrieved_locked_terms": [
+      {
+        "term_id": "k_9d141c9cc17e",
+        "source_term": "阿亚库乔",
+        "target_term": "Ayacucho",
+        "target_language": "es-MX",
+        "target_market": "MX",
+        "is_locked": true,
+        "context_ref": {
+          "item_id": "k_9d141c9cc17e",
+          "content_hash": "65b1ed0507b4aa951b5bb1d65c09e919537867b02b72d930dac2fc87c54d279d",
+          "snapshot": {
+            "item_id": "k_9d141c9cc17e",
+            "project_id": "PRJ-DEFAULT",
+            "task_id": "TASK-20261023-DD6A5D13",
+            "category": "glossary",
+            "source_text": "阿亚库乔",
+            "target_text": "Ayacucho",
+            "target_language": "es-MX",
+            "target_market": "MX",
+            "is_locked": true,
+            "status": "CONFIRMED",
+            "scope": "task",
+            "evidence": "项目术语表 TERM-AYACUCHO-001",
+            "created_at": "2026-10-23T05:59:46.735Z",
+            "updated_at": "2026-10-23T05:59:46.735Z"
+          }
+        }
+      }
+    ],
+    "prompt_contains_locked_term": true,
+    "prompt_contains_next_context": true,
+    "prompt_user_chars": 1837,
+    "semantic_check_issues": [],
+    "result": "PASS"
+  },
+  "case_fail_locked_term_omission": {
+    "rejected_text": "La temporada de lluvias en la sierra se adelantó respecto al año pasado.",
+    "issue": {
+      "severity": "BLOCK",
+      "category": "omission",
+      "source_span": "阿亚库乔",
+      "detail": "违反强制锁词: 源句包含锁词 '阿亚库乔'，但译文未包含指定译法 'Ayacucho'！",
+      "suggestion": "请在译文中强制使用 'Ayacucho'"
+    },
+    "http_confirm_status": 400,
+    "http_confirm_detail": "存在未解决的锁词或语义检查阻断，不能确认/锁定",
+    "result": "BLOCKED"
+  },
+  "case_concurrent_revision_conflict": {
+    "first_edit_status": 200,
+    "first_edit_revision": 2,
+    "stale_edit_status": 409,
+    "stale_edit_detail": "译文修订已变化，请刷新后复核",
+    "stale_confirm_all_status": 409,
+    "stale_confirm_all_detail": "译稿列表已变化，请刷新后确认",
+    "result": "409_CONFLICT"
+  },
+  "boundary": "初翻正文由受控夹具写入并经真实人工确认路由确认；真实 MT 需外部模型授权，本批未调用"
+}

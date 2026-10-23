@@ -1,0 +1,168 @@
+{
+  "receipt": "step5-oral-review",
+  "generated_at": "2026-10-23T05:59:47+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "step": "口语适配与节奏审校（CPS / 行长 / 无损拆句 / 四重语义闸门）",
+  "case_block_over_limit": {
+    "text": "Cuando cayó la primera gota, nadie se movió más.",
+    "visible_chars": 48,
+    "duration_sec": 1.714,
+    "cps": 28.0,
+    "max_line_length": 48,
+    "issues": [
+      "CPS_BLOCK",
+      "LINE_LENGTH_EXCEEDED"
+    ],
+    "status": "BLOCK",
+    "http_status": 200,
+    "result": "BLOCK"
+  },
+  "case_split_refused_on_short_window": {
+    "window_sec": 1.714,
+    "split_suggestion": null,
+    "reason": "任一侧不足 0.833s 时引擎拒绝给方案，不硬切时间轴"
+  },
+  "case_lossless_split_and_pass": {
+    "window_sec": 3.0,
+    "parts": [
+      {
+        "part_index": 0,
+        "text": "Cuando cayó la primera gota,",
+        "start_time": 1.0,
+        "end_time": 2.787,
+        "duration_sec": 1.787,
+        "char_count": 28
+      },
+      {
+        "part_index": 1,
+        "text": "nadie se movió más.",
+        "start_time": 2.787,
+        "end_time": 4.0,
+        "duration_sec": 1.213,
+        "char_count": 19
+      }
+    ],
+    "duration_conservation": {
+      "sum_parts_sec": 3.0,
+      "span_sec": 3.0,
+      "abs_delta_sec": 0.0,
+      "tolerance_sec": 0.001,
+      "passed": true
+    },
+    "continuity": "相邻子句 end == 下一句 start（|Δt| < 1ms）",
+    "text_lossless": true,
+    "re_review": {
+      "overall_status": "PASS",
+      "items": [
+        {
+          "segment_id": "u201",
+          "text": "Cuando cayó la primera gota,",
+          "cps": 15.67,
+          "max_line_length": 28,
+          "issues": [],
+          "status": "PASS",
+          "guard": null,
+          "split_candidates": null
+        },
+        {
+          "segment_id": "u202",
+          "text": "nadie se movió más.",
+          "cps": 15.66,
+          "max_line_length": 19,
+          "issues": [],
+          "status": "PASS",
+          "guard": null,
+          "split_candidates": null
+        }
+      ],
+      "manifest": {
+        "schema_version": "1.0.0",
+        "policy_version": "2026-10-22.1",
+        "target_language": "es-MX",
+        "pipeline": "deterministic_rules_only",
+        "stages": [
+          "readability_metrics",
+          "complexity_and_lossless_split",
+          "oral_deviation_scoring",
+          "semantic_invariant_guard"
+        ],
+        "model_used": false,
+        "model_invocation": "NOT_INVOKED",
+        "token_used": 0,
+        "latency_ms": 0,
+        "thresholds": {
+          "cps_soft_limit": 17.0,
+          "cps_hard_limit": 20.0,
+          "max_line_length": 42,
+          "max_line_count": 2,
+          "min_duration_sec": 0.833,
+          "max_duration_sec": 7.0,
+          "complex_conjunction_threshold": 2,
+          "nesting_depth_threshold": 4,
+          "written_score_warn_threshold": 0.75,
+          "split_time_tolerance": 0.001
+        },
+        "profile_status": "PILOT_THRESHOLDS_UNCALIBRATED",
+        "segment_count": 2,
+        "issue_counts": {},
+        "candidate_count": 0,
+        "blocked_candidate_count": 0,
+        "auto_apply_allowed_count": 0,
+        "complex_sentence_count": 0,
+        "split_suggestion_count": 0,
+        "deviation_warn_count": 0,
+        "semantic_guard": "ENFORCED",
+        "split_time_invariance": "ENFORCED",
+        "human_review_required": false,
+        "rule_mode": "deterministic_heuristic",
+        "naturalness_model": "NOT_CONNECTED",
+        "coverage_limitations": [
+          "词表和可读性规则不能保证自然度、反讽或语义完整"
+        ],
+        "note": "纯白盒规则引擎；不调用任何大模型，不写入已人工确认/锁定稿",
+        "trusted_input": {
+          "task_revision": 1,
+          "translation_revision": "src1:u201=1,u202=1",
+          "content_hash": "d62aa603ba89f219778d8296d013ea745dcd1fb87ee780f92bf6feafc3f2a79e"
+        },
+        "mode": "rules_only"
+      }
+    },
+    "result": "PASS"
+  },
+  "case_semantic_guard": {
+    "split_vs_original": {
+      "polarity_consistent": true,
+      "entity_consistent": true,
+      "relationship_consistent": true,
+      "stance_consistent": true,
+      "violations": [],
+      "is_blocked": false
+    },
+    "negative_control": {
+      "tampered_text": "Cuando cayó la primera gota, todos se movieron mucho.",
+      "violations": [
+        "POLARITY_MISMATCH"
+      ],
+      "block_reasons": [
+        "否定极性被改变：原文否定词 {'nadie': 1} → 改写 {}"
+      ],
+      "is_blocked": true
+    },
+    "result": "GUARD_ENFORCED"
+  },
+  "case_split_alone_insufficient": {
+    "statement": "拆句守恒 → 加权平均 CPS 不变；仅拆句不能降低 CPS",
+    "observed_cps_when_window_not_extended": 28.0,
+    "observed_status": "BLOCK",
+    "result": "STILL_BLOCKED"
+  },
+  "boundary": "P-ORAL 阈值为未校准试点常量（17/20 CPS、42 字符、0.833s），仅白盒规则，不证明自然度"
+}

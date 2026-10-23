@@ -1,0 +1,99 @@
+{
+  "receipt": "step3-culture-taboo-loop",
+  "generated_at": "2026-10-23T05:59:47+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "step": "文化合规审查（rules: R-MX-TABOO-01）",
+  "rule_library": {
+    "all_rules": [
+      "R-MX-DISCRIM-01",
+      "R-MX-CINEMA-01",
+      "R-MX-TABOO-01",
+      "R-MX-UNVERIFIED-01"
+    ],
+    "active_verified_rules": [],
+    "note": "规则库 4 条均为 CANDIDATE/UNVERIFIED，生产闸门 only_active=True 时规则与案例均为空；本轮用 only_active=False 预演规则/案例库，不代表已生效规范"
+  },
+  "case_detection": {
+    "source_text": "滚出去，你这个混蛋！",
+    "bad_translation": "¡Lárgate de aquí, maldito cabrón!",
+    "pre_fix_regex": "\\b(chingar a tu madre|hijo de la chingada)\\b",
+    "pre_fix_detected": false,
+    "post_fix_detected": true,
+    "defect": "R-MX-TABOO-01 的 trigger_condition 已写明 cabrón 恶意辱骂，但模式库只登记 chingar 衍生词，导致漏检",
+    "fix": "在 culture_check.handler 的 R-MX-TABOO-01 正则补充 maldito cabrón / cabrón maldito 变体",
+    "issues": [
+      {
+        "issue_id": "iss_7080fb4b48644d9bab37",
+        "unit_id": "u001",
+        "category": "local_taboo",
+        "trigger_spans": [
+          {
+            "source_span": "混蛋",
+            "target_span": "maldito cabrón",
+            "start_char": 18,
+            "end_char": 32
+          }
+        ],
+        "severity_proposal": "P2",
+        "impact_level": 1,
+        "occurrence_likelihood": 2,
+        "remediation_difficulty": 1,
+        "ranking_score": 2,
+        "factor_reasons": {
+          "impact_reason": "触犯规则 R-MX-TABOO-01 明确界定的禁用/受限模式",
+          "likelihood_reason": "拉美市场合规审查命中率极高",
+          "remediation_reason": "存在标准es-MX平替方案"
+        },
+        "confidence": {
+          "raw_score": null,
+          "calibrated_score": null,
+          "calibration_version": null,
+          "basis": "规则模式库精确命中(uncalibrated)"
+        },
+        "rule_refs": [
+          "R-MX-TABOO-01"
+        ],
+        "case_refs": [
+          "MX-CASE-01"
+        ],
+        "evidence_refs": [
+          "MX-CASE-01"
+        ],
+        "evidence_status": "sufficient",
+        "speaker_ref": "spk_01",
+        "narrative_stance": null,
+        "explanation": "译文滥用了墨西哥高度粗鄙的极端辱骂词，在全年龄/泛拉美传播中易引发观众反感及平台降权。",
+        "suggested_action": "modify_dialogue",
+        "suggested_translation": "¡Lárgate de aquí, vete al diablo!",
+        "missing_context": [],
+        "downgraded_from_p0": false,
+        "downgrade_reason": null,
+        "status": "AI_PROPOSED",
+        "decision_action": null,
+        "decision_by": null,
+        "decision_at": null
+      }
+    ],
+    "result": "INTERCEPTED"
+  },
+  "case_repaired_and_passed": {
+    "fixed_translation": "¡Sal de aquí, no te quiero ver!",
+    "issues": [],
+    "issue_count": 0,
+    "status": "PASS",
+    "result": "PASS"
+  },
+  "case_http_route_gate": {
+    "http_status": 403,
+    "detail": "本次工程批次未授权实际素材外传或云端调用: GEMINI_API_KEY (云端API密钥未配置)、GEMINI_EXTERNAL_OUTBOUND_AUTHORIZED (素材外传未经独立授权)、GEMINI_BUDGET_AUTHORIZED (调用预算及计费未经独立授权)",
+    "note": "正式路线要求云端授权；本批零外呼，故模型语境路径熔断，确定性规则路径按模块设计直接验证"
+  },
+  "boundary": "只检查字幕文本；规则为 CANDIDATE/UNVERIFIED，未发现风险不等于合规"
+}

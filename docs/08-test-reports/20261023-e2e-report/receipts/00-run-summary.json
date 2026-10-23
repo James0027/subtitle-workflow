@@ -1,0 +1,73 @@
+{
+  "receipt": "00-run-summary",
+  "generated_at": "2026-10-23T06:00:03+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "run_id": "e2e20261023-9cd285fc",
+  "started_at": "2026-10-23T05:59:29+00:00",
+  "finished_at": "2026-10-23T05:59:49+00:00",
+  "duration_sec": 19.34,
+  "health_http_status": 200,
+  "health_body": {
+    "status": "healthy",
+    "service": "subtitle-intake-storage",
+    "version": "1.0.0",
+    "tools": {
+      "ffmpeg": "ffmpeg version 9.0.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+      "ffprobe": "ffprobe version 9.0.1-full_build-www.gyan.dev Copyright (c) 2007-2026 the FFmpeg developers",
+      "ffmpeg_path": "C:\\Users\\Lenovo\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.1-full_build\\bin\\ffmpeg.exe",
+      "ffprobe_path": "C:\\Users\\Lenovo\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.1-full_build\\bin\\ffprobe.exe"
+    },
+    "limits": {
+      "max_media_bytes": 524288000,
+      "max_duration_ms": 600000
+    }
+  },
+  "session": {
+    "authenticated": true,
+    "operator": {
+      "session_token": "fb0e86fd56eef577368cb55935f97e8bb20ead4e88df5e34",
+      "operator_id": "op_eaa7813a",
+      "session_created_at": "2026-10-23T05:59:32.770Z",
+      "display_name": "E2E 操作员",
+      "role": "media_operator",
+      "status": "active"
+    },
+    "operators": [
+      {
+        "operator_id": "op_eaa7813a",
+        "display_name": "E2E 操作员",
+        "role": "media_operator",
+        "registered_at": "2026-10-23T05:59:32.750Z",
+        "status": "active"
+      },
+      {
+        "operator_id": "op_a5be737f",
+        "display_name": "E2E 终审员",
+        "role": "reviewer",
+        "registered_at": "2026-10-23T05:59:32.787Z",
+        "status": "active"
+      }
+    ],
+    "initialized": true
+  },
+  "isolated_db": "C:\\Users\\Lenovo\\AppData\\Local\\Temp\\e2e_061023_s4go9xtb\\workflow.db",
+  "steps": {
+    "step1_asr": "PASS",
+    "step2_translation": "PASS",
+    "step3_culture": "PASS",
+    "step4_unit_format": "PASS",
+    "step5_oral_review": "PASS",
+    "step6_compliance": "PUBLISH_READY + 100% 对账"
+  },
+  "live_service_probe": {
+    "root_http_status": 200,
+    "health_http_status": 200
+  }
+}

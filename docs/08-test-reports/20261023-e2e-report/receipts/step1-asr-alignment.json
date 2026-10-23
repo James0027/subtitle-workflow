@@ -1,0 +1,150 @@
+{
+  "receipt": "step1-asr-alignment",
+  "generated_at": "2026-10-23T05:59:46+00:00",
+  "manifest": {
+    "model_used": false,
+    "model_invocation": "NOT_INVOKED",
+    "token_used": 0,
+    "external_api_calls": 0,
+    "cost": null,
+    "execution_mode": "deterministic_whitebox"
+  },
+  "step": "ASR 对齐（切片时间对齐 + 极短尾片安全合并 + 专名召回）",
+  "audio_seconds": {
+    "standard": 25.0,
+    "tail_2015ms": 20.15,
+    "tail_2090ms": 20.9
+  },
+  "case_success_standard_slice": {
+    "http_status": 200,
+    "chunks": [
+      {
+        "chunk_id": "chk_TASK-202_srun_10b81e21_000",
+        "chunk_index": 0,
+        "offset_ms": 0,
+        "end_ms": 10000,
+        "duration_ms": 10000,
+        "checksum_sha256": "237fe78a052222b714d646d4422b2727ecb78fd0287603c56c396b9b4ae9733d"
+      },
+      {
+        "chunk_id": "chk_TASK-202_srun_10b81e21_001",
+        "chunk_index": 1,
+        "offset_ms": 10000,
+        "end_ms": 20000,
+        "duration_ms": 10000,
+        "checksum_sha256": "237fe78a052222b714d646d4422b2727ecb78fd0287603c56c396b9b4ae9733d"
+      },
+      {
+        "chunk_id": "chk_TASK-202_srun_10b81e21_002",
+        "chunk_index": 2,
+        "offset_ms": 20000,
+        "end_ms": 25000,
+        "duration_ms": 5000,
+        "checksum_sha256": "7804ee01c279958040db1f1b69f2ce16cb14ddcf2dd80ecae8371b5b33ee37cf"
+      }
+    ],
+    "alignment_check": "offset_ms + duration_ms == end_ms 且逐片连续，总时长 25000ms",
+    "result": "PASS"
+  },
+  "case_fail_protection_150ms_tail": {
+    "http_status": 200,
+    "chunks": [
+      {
+        "chunk_id": "chk_TASK-202_srun_2ddb4ba9_000",
+        "chunk_index": 0,
+        "offset_ms": 0,
+        "end_ms": 10000,
+        "duration_ms": 10000
+      },
+      {
+        "chunk_id": "chk_TASK-202_srun_2ddb4ba9_001",
+        "chunk_index": 1,
+        "offset_ms": 10000,
+        "end_ms": 20150,
+        "duration_ms": 10150
+      }
+    ],
+    "policy": "<250ms 残留并入前一片；150ms 尾片未独立成片",
+    "shortest_chunk_ms": 10000,
+    "total_ms_conserved": 20150,
+    "http_400_invalid_argument": false,
+    "result": "BLOCKED_AND_MERGED"
+  },
+  "case_control_900ms_tail": {
+    "chunks": [
+      {
+        "chunk_id": "chk_TASK-202_srun_e3cc9637_000",
+        "offset_ms": 0,
+        "end_ms": 10000,
+        "duration_ms": 10000
+      },
+      {
+        "chunk_id": "chk_TASK-202_srun_e3cc9637_001",
+        "offset_ms": 10000,
+        "end_ms": 20000,
+        "duration_ms": 10000
+      },
+      {
+        "chunk_id": "chk_TASK-202_srun_e3cc9637_002",
+        "offset_ms": 20000,
+        "end_ms": 20900,
+        "duration_ms": 900
+      }
+    ],
+    "result": "TAIL_PRESERVED"
+  },
+  "case_legacy_repair_tiny_tail": {
+    "input_durations_ms": [
+      10000,
+      150
+    ],
+    "output_durations_ms": [
+      10150
+    ],
+    "policy": "merge_tail_under_250ms",
+    "source_chunk_ids": [
+      "legacy_000",
+      "legacy_001"
+    ],
+    "preserved_end_ms": 10150,
+    "checksum_recomputed": "646c75990c3707838d05aa50a5e5f190f24ca8ea9be92200526209e695053f77",
+    "level": "handler-level（真实 WAV + 真实合并函数）",
+    "result": "MERGED_LOSSLESS"
+  },
+  "case_proper_name_recall": {
+    "glossary": [
+      {
+        "term": "阿亚库乔",
+        "term_id": "TERM-AYACUCHO-001"
+      }
+    ],
+    "recalled": [
+      {
+        "name": "阿亚库乔",
+        "match_status": "matched",
+        "glossary_ref": "TERM-AYACUCHO-001"
+      },
+      {
+        "name": "不存在的品牌",
+        "match_status": "pending_confirmation",
+        "glossary_ref": null
+      }
+    ],
+    "rule": "模型自报 matched 一律重置；仅术语表精确命中由代码置 matched",
+    "result": "PASS"
+  },
+  "case_external_model_gate": {
+    "http_status": 403,
+    "detail": {
+      "status": "待配置/待授权",
+      "message": "本次工程批次未授权实际素材外传或云端调用。云接口适配器与配置流程已就绪，但阻断未经授权的外传与收费。",
+      "missing_items": [
+        "GEMINI_API_KEY (云端API密钥未配置)",
+        "GEMINI_EXTERNAL_OUTBOUND_AUTHORIZED (素材外传未经独立授权)",
+        "GEMINI_BUDGET_AUTHORIZED (调用预算及计费未经独立授权)"
+      ],
+      "model_id": "gemini-3.5-flash-lite"
+    },
+    "result": "FAIL_CLOSED (未授权外传)"
+  }
+}

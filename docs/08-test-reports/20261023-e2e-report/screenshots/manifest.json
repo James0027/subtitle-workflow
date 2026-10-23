@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-10-23T14:01:51+08:00",
+  "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "shots": [
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\01-e2e-full-page.png",
+      "bytes": 596104,
+      "crop": {
+        "cropped": true,
+        "from_height": 11250,
+        "to_height": 6611,
+        "width": 1800
+      },
+      "window": "1440x9000",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\01-e2e-full-page.html",
+      "panels": [
+        "panelTask",
+        "panelUpload",
+        "panelAuxiliary",
+        "panelAudioTrack",
+        "panelComparison",
+        "panelChecklist",
+        "panelConfirm",
+        "panelASR",
+        "panelSourceCleanup",
+        "panelKnowledge",
+        "panelTranslation",
+        "panelCulture",
+        "panelDelivery",
+        "panelTrace"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\02-panel-asr.png",
+      "bytes": 175231,
+      "crop": {
+        "cropped": true,
+        "from_height": 3000,
+        "to_height": 2052,
+        "width": 1700
+      },
+      "window": "1360x2400",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\02-panel-asr.html",
+      "panels": [
+        "panelASR"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\03-panel-translation.png",
+      "bytes": 214535,
+      "crop": {
+        "cropped": true,
+        "from_height": 3750,
+        "to_height": 2178,
+        "width": 1700
+      },
+      "window": "1360x3000",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\03-panel-translation.html",
+      "panels": [
+        "panelSourceCleanup",
+        "panelKnowledge",
+        "panelTranslation"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\04-panel-culture.png",
+      "bytes": 126360,
+      "crop": {
+        "cropped": true,
+        "from_height": 2750,
+        "to_height": 1452,
+        "width": 1700
+      },
+      "window": "1360x2200",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\04-panel-culture.html",
+      "panels": [
+        "panelCulture"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\05-panel-unit-format.png",
+      "bytes": 136797,
+      "crop": {
+        "cropped": true,
+        "from_height": 2750,
+        "to_height": 1365,
+        "width": 1700
+      },
+      "window": "1360x2200",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\05-panel-unit-format.html",
+      "panels": [
+        "panelDelivery"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\06-panel-oral-review.png",
+      "bytes": 128438,
+      "crop": {
+        "cropped": true,
+        "from_height": 3000,
+        "to_height": 1406,
+        "width": 1700
+      },
+      "window": "1360x2400",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\06-panel-oral-review.html",
+      "panels": [
+        "panelDelivery"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\07-panel-compliance-qc-failed.png",
+      "bytes": 129615,
+      "crop": {
+        "cropped": true,
+        "from_height": 3000,
+        "to_height": 1414,
+        "width": 1700
+      },
+      "window": "1360x2400",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\07-panel-compliance-qc-failed.html",
+      "panels": [
+        "panelDelivery"
+      ]
+    },
+    {
+      "file": "docs\\08-test-reports\\20261023-e2e-report\\screenshots\\08-panel-compliance-signoff-success.png",
+      "bytes": 112957,
+      "crop": {
+        "cropped": true,
+        "from_height": 3000,
+        "to_height": 1748,
+        "width": 1700
+      },
+      "window": "1360x2400",
+      "source_html": "docs\\08-test-reports\\20261023-e2e-report\\_snapshot_src\\08-panel-compliance-signoff-success.html",
+      "panels": [
+        "panelDelivery"
+      ]
+    }
+  ]
+}
