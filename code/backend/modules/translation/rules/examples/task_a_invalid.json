@@ -1,0 +1,16 @@
+{
+  "speakers": [
+    {
+      "speaker_id": "spk_1",
+      "character_ref": "无证据凭空脑补的男主角色名"
+    }
+  ],
+  "utterances": [
+    {
+      "unit_id": "u_001",
+      "text": "",
+      "source_spans": []
+    }
+  ],
+  "operations": []
+}

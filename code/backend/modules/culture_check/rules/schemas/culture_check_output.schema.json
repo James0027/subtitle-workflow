@@ -1,0 +1,522 @@
+{
+  "$defs": {
+    "ConfidenceDetail": {
+      "additionalProperties": false,
+      "description": "置信度与标定分离模型：未接入独立校准时，calibrated_score 必须为严格 None",
+      "properties": {
+        "raw_score": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Score"
+        },
+        "calibrated_score": {
+          "const": null,
+          "default": null,
+          "title": "Calibrated Score",
+          "type": "null"
+        },
+        "calibration_version": {
+          "const": null,
+          "default": null,
+          "title": "Calibration Version",
+          "type": "null"
+        },
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basis"
+      ],
+      "title": "ConfidenceDetail",
+      "type": "object"
+    },
+    "CultureCheckIssue": {
+      "additionalProperties": false,
+      "description": "服务端完整处理后、可持久化并展示的风险项",
+      "properties": {
+        "issue_id": {
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "legal_platform",
+            "religion",
+            "politics",
+            "sex_violence_addiction_ratings",
+            "discrimination",
+            "local_taboo",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "trigger_spans": {
+          "items": {
+            "$ref": "#/$defs/TriggerSpan"
+          },
+          "minItems": 1,
+          "title": "Trigger Spans",
+          "type": "array"
+        },
+        "severity_proposal": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "UNASSESSED"
+          ],
+          "title": "Severity Proposal",
+          "type": "string"
+        },
+        "impact_level": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impact Level"
+        },
+        "occurrence_likelihood": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurrence Likelihood"
+        },
+        "remediation_difficulty": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Difficulty"
+        },
+        "ranking_score": {
+          "anyOf": [
+            {
+              "maximum": 27,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ranking Score"
+        },
+        "factor_reasons": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FactorReasons"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "$ref": "#/$defs/ConfidenceDetail"
+        },
+        "rule_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Refs",
+          "type": "array"
+        },
+        "case_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Refs",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "evidence_status": {
+          "enum": [
+            "sufficient",
+            "pending_supplementary",
+            "insufficient"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        },
+        "speaker_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speaker Ref"
+        },
+        "narrative_stance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Narrative Stance"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "suggested_action": {
+          "enum": [
+            "block_release",
+            "modify_dialogue",
+            "add_warning",
+            "contextual_review",
+            "ignore_with_reason"
+          ],
+          "title": "Suggested Action",
+          "type": "string"
+        },
+        "suggested_translation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggested Translation"
+        },
+        "missing_context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Context",
+          "type": "array"
+        },
+        "downgraded_from_p0": {
+          "default": false,
+          "title": "Downgraded From P0",
+          "type": "boolean"
+        },
+        "downgrade_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Downgrade Reason"
+        },
+        "status": {
+          "default": "AI_PROPOSED",
+          "enum": [
+            "AI_PROPOSED",
+            "CONFIRMED",
+            "EDITED",
+            "REJECTED",
+            "IGNORED",
+            "PENDING_RECHECK"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "decision_action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision Action"
+        },
+        "decision_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision By"
+        },
+        "decision_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Decision At"
+        }
+      },
+      "required": [
+        "issue_id",
+        "unit_id",
+        "category",
+        "trigger_spans",
+        "severity_proposal",
+        "confidence",
+        "evidence_status",
+        "explanation",
+        "suggested_action"
+      ],
+      "title": "CultureCheckIssue",
+      "type": "object"
+    },
+    "FactorReasons": {
+      "additionalProperties": false,
+      "description": "排序因子依据",
+      "properties": {
+        "impact_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impact Reason"
+        },
+        "likelihood_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Likelihood Reason"
+        },
+        "remediation_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Reason"
+        }
+      },
+      "title": "FactorReasons",
+      "type": "object"
+    },
+    "TriggerSpan": {
+      "additionalProperties": false,
+      "description": "经工程精确校验并补齐边界的触发跨度",
+      "properties": {
+        "source_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Span"
+        },
+        "target_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Span"
+        },
+        "start_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Char"
+        },
+        "end_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Char"
+        }
+      },
+      "title": "TriggerSpan",
+      "type": "object"
+    },
+    "UncheckedUnit": {
+      "additionalProperties": false,
+      "description": "未检单元记录",
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit_id",
+        "reason"
+      ],
+      "title": "UncheckedUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "文化检测完整交付产物",
+  "properties": {
+    "schema_version": {
+      "default": "1.0.0",
+      "description": "Schema版本",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_id": {
+      "description": "本次Run唯一标识",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "task_ref": {
+      "description": "任务编号",
+      "title": "Task Ref",
+      "type": "string"
+    },
+    "task_revision": {
+      "description": "任务源译修订版本",
+      "minimum": 1,
+      "title": "Task Revision",
+      "type": "integer"
+    },
+    "target_market": {
+      "const": "MX",
+      "default": "MX",
+      "description": "目标市场",
+      "title": "Target Market",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/CultureCheckIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "checked_unit_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Checked Unit Ids",
+      "type": "array"
+    },
+    "unchecked_units": {
+      "items": {
+        "$ref": "#/$defs/UncheckedUnit"
+      },
+      "title": "Unchecked Units",
+      "type": "array"
+    },
+    "coverage_limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Coverage Limitations",
+      "type": "array"
+    },
+    "manifest": {
+      "additionalProperties": true,
+      "title": "Manifest",
+      "type": "object"
+    }
+  },
+  "required": [
+    "run_id",
+    "task_ref",
+    "task_revision"
+  ],
+  "title": "CultureCheckResult",
+  "type": "object"
+}

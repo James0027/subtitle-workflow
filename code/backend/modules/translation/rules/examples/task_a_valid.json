@@ -1,0 +1,77 @@
+{
+  "speakers": [
+    {
+      "speaker_id": "spk_1",
+      "character_ref": null,
+      "evidence_refs": [
+        "chk_01"
+      ],
+      "uncertainties": [
+        "无明确自称或呼告，保持匿名"
+      ]
+    },
+    {
+      "speaker_id": "spk_2",
+      "character_ref": null,
+      "evidence_refs": [
+        "chk_01",
+        "chk_02"
+      ],
+      "uncertainties": [
+        "没有同一说话人自称证据，保留匿名"
+      ]
+    }
+  ],
+  "utterances": [
+    {
+      "unit_id": "u_001",
+      "text": "你终于肯回来见我了。",
+      "source_spans": [
+        {
+          "chunk_id": "chk_01",
+          "start_ms": 1200,
+          "end_ms": 3400,
+          "original_text": "你终于肯回来见我了"
+        }
+      ],
+      "speaker_id": "spk_1",
+      "character_ref": null,
+      "start_ms": 1200,
+      "end_ms": 3400,
+      "timing_precision": "phrase",
+      "uncertainties": []
+    },
+    {
+      "unit_id": "u_002",
+      "text": "当年若不是你，我何至于流落海外三年！",
+      "source_spans": [
+        {
+          "chunk_id": "chk_01",
+          "start_ms": 4000,
+          "end_ms": 9800,
+          "original_text": "当年若不是你我何至于流落"
+        },
+        {
+          "chunk_id": "chk_02",
+          "start_ms": 100,
+          "end_ms": 2200,
+          "original_text": "海外三年！"
+        }
+      ],
+      "speaker_id": "spk_2",
+      "character_ref": null,
+      "start_ms": 4000,
+      "end_ms": 12200,
+      "timing_precision": "chunk_fallback",
+      "uncertainties": []
+    }
+  ],
+  "operations": [
+    {
+      "op": "stitch",
+      "detail": "跨切片chk_01与chk_02断句拼接",
+      "unit_id": "u_002"
+    }
+  ],
+  "issues": []
+}

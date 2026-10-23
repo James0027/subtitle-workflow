@@ -1,0 +1,318 @@
+{
+  "$defs": {
+    "CultureUnitInput": {
+      "additionalProperties": false,
+      "description": "待检单句源译及上下文",
+      "properties": {
+        "unit_id": {
+          "description": "对话单元编号，如 u_001",
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "translation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translation Id"
+        },
+        "translation_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translation Revision"
+        },
+        "source_text": {
+          "description": "源语忠实台词",
+          "title": "Source Text",
+          "type": "string"
+        },
+        "target_text": {
+          "description": "初翻目标语言译文",
+          "title": "Target Text",
+          "type": "string"
+        },
+        "speaker_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "说话人编号",
+          "title": "Speaker Id"
+        },
+        "character_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "角色名",
+          "title": "Character Name"
+        },
+        "narrative_stance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "叙事立场",
+          "title": "Narrative Stance"
+        },
+        "start_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "起始毫秒",
+          "title": "Start Ms"
+        },
+        "end_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "结束毫秒",
+          "title": "End Ms"
+        },
+        "prev_units": {
+          "description": "前至多2句上下文",
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "maxItems": 2,
+          "title": "Prev Units",
+          "type": "array"
+        },
+        "next_units": {
+          "description": "后至多2句上下文",
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "maxItems": 2,
+          "title": "Next Units",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit_id",
+        "source_text",
+        "target_text"
+      ],
+      "title": "CultureUnitInput",
+      "type": "object"
+    },
+    "MediaEvidence": {
+      "additionalProperties": false,
+      "description": "音画证据及覆盖范围说明",
+      "properties": {
+        "has_audio": {
+          "default": false,
+          "description": "是否覆盖音频信息",
+          "title": "Has Audio",
+          "type": "boolean"
+        },
+        "has_video_frames": {
+          "default": false,
+          "description": "是否覆盖视频画面信息",
+          "title": "Has Video Frames",
+          "type": "boolean"
+        },
+        "coverage_note": {
+          "default": "仅检查提供的台词文本，未检查音频与画面",
+          "description": "覆盖说明",
+          "title": "Coverage Note",
+          "type": "string"
+        }
+      },
+      "title": "MediaEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "文化检测任务请求",
+  "properties": {
+    "schema_version": {
+      "default": "1.0.0",
+      "description": "Schema版本",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_ref": {
+      "description": "任务编号",
+      "title": "Task Ref",
+      "type": "string"
+    },
+    "task_revision": {
+      "description": "任务当前源译修订版本",
+      "minimum": 1,
+      "title": "Task Revision",
+      "type": "integer"
+    },
+    "source_language": {
+      "default": "zh-CN",
+      "description": "源语言",
+      "title": "Source Language",
+      "type": "string"
+    },
+    "target_language": {
+      "const": "es-MX",
+      "default": "es-MX",
+      "description": "目标语言",
+      "title": "Target Language",
+      "type": "string"
+    },
+    "target_market": {
+      "const": "MX",
+      "default": "MX",
+      "description": "目标市场代码，冻结MX",
+      "title": "Target Market",
+      "type": "string"
+    },
+    "target_audience": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "目标受众",
+      "title": "Target Audience"
+    },
+    "target_rating": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "期望分级",
+      "title": "Target Rating"
+    },
+    "distribution_channel": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "发行平台渠道",
+      "title": "Distribution Channel"
+    },
+    "missing_channel_or_audience": {
+      "default": false,
+      "description": "受众或渠道缺失标记",
+      "title": "Missing Channel Or Audience",
+      "type": "boolean"
+    },
+    "units": {
+      "description": "待检测的字幕单元列表",
+      "items": {
+        "$ref": "#/$defs/CultureUnitInput"
+      },
+      "minItems": 1,
+      "title": "Units",
+      "type": "array"
+    },
+    "selected_rule_ids": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "指定规则ID列表",
+      "title": "Selected Rule Ids"
+    },
+    "case_refs": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "参考案例ID列表",
+      "title": "Case Refs"
+    },
+    "media_evidence": {
+      "$ref": "#/$defs/MediaEvidence",
+      "description": "音画证据覆盖"
+    },
+    "simulate": {
+      "default": false,
+      "description": "是否使用本地隔离模拟引擎",
+      "title": "Simulate",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "task_ref",
+    "task_revision",
+    "units"
+  ],
+  "title": "CultureCheckRequest",
+  "type": "object"
+}

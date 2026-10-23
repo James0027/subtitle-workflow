@@ -1,0 +1,36 @@
+{
+  "unit_id": "u_001",
+  "category": "discrimination",
+  "trigger_spans": [
+    {
+      "source_span": "那个土包子下等人",
+      "target_span": "ese indio mugroso",
+      "start_char": 0,
+      "end_char": 17
+    }
+  ],
+  "severity_proposal": "P1",
+  "impact_level": 2,
+  "occurrence_likelihood": 2,
+  "remediation_difficulty": 2,
+  "factor_reasons": {
+    "impact_reason": "在墨西哥使用indio带有极强种族贬损色彩，违反反歧视法与公序良俗",
+    "likelihood_reason": "拉美主流流媒体平台审核与当地观众普遍对种族侮辱高度敏感",
+    "remediation_difficulty": "替换为常规阶层冲突表达（如ese don nadie）即可化解，不破坏剧情"
+  },
+  "confidence": {
+    "raw_score": 0.88,
+    "calibrated_score": null,
+    "calibration_version": null,
+    "basis": "模型基于墨西哥反歧视法第9条XV款与es-MX敏感度自评(uncalibrated)"
+  },
+  "rule_refs": ["R-MX-DISCRIM-01"],
+  "case_refs": ["MX-CASE-01"],
+  "evidence_refs": ["MX-OFF-02-ART9-XV"],
+  "evidence_status": "sufficient",
+  "speaker_ref": "spk_1",
+  "narrative_stance": "character_villain",
+  "explanation": "台词使用了极具种族歧视色彩的词汇，虽为反派口吻，但在泛拉美分发中易触犯反歧视审核红线，建议平替为中性侮辱词汇。",
+  "suggested_action": "modify_dialogue",
+  "suggested_translation": "ese don nadie que no tiene nada"
+}

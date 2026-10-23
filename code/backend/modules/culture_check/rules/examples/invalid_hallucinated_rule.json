@@ -1,0 +1,23 @@
+{
+  "unit_id": "u_001",
+  "category": "religion",
+  "trigger_spans": [
+    {
+      "source_span": "上帝啊",
+      "target_span": "Dios mío"
+    }
+  ],
+  "severity_proposal": "P1",
+  "impact_level": 2,
+  "occurrence_likelihood": 1,
+  "remediation_difficulty": 1,
+  "confidence": {
+    "raw_score": 0.70,
+    "calibrated_score": null,
+    "basis": "幻觉法条"
+  },
+  "rule_refs": ["R-MX-HALLUCINATED-RELIGION-BAN-999"],
+  "evidence_status": "pending_supplementary",
+  "explanation": "虚构了不存在的宗教禁止法条，工程校验必须直接拒绝该输出",
+  "suggested_action": "modify_dialogue"
+}

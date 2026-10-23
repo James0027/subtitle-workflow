@@ -1,0 +1,344 @@
+{
+  "$defs": {
+    "LLMCultureIssue": {
+      "additionalProperties": false,
+      "description": "LLM 纯模型原始检出项（无服务端状态、无系统打分）",
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "legal_platform",
+            "religion",
+            "politics",
+            "sex_violence_addiction_ratings",
+            "discrimination",
+            "local_taboo",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "trigger_spans": {
+          "items": {
+            "$ref": "#/$defs/LLMTriggerSpan"
+          },
+          "minItems": 1,
+          "title": "Trigger Spans",
+          "type": "array"
+        },
+        "severity_proposal": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "UNASSESSED"
+          ],
+          "title": "Severity Proposal",
+          "type": "string"
+        },
+        "impact_level": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impact Level"
+        },
+        "occurrence_likelihood": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurrence Likelihood"
+        },
+        "remediation_difficulty": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remediation Difficulty"
+        },
+        "factor_reasons": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Factor Reasons"
+        },
+        "confidence_raw": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence Raw"
+        },
+        "confidence_basis": {
+          "title": "Confidence Basis",
+          "type": "string"
+        },
+        "rule_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Refs",
+          "type": "array"
+        },
+        "case_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Case Refs",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "evidence_status": {
+          "enum": [
+            "sufficient",
+            "pending_supplementary",
+            "insufficient"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        },
+        "speaker_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speaker Ref"
+        },
+        "narrative_stance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Narrative Stance"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "suggested_action": {
+          "enum": [
+            "block_release",
+            "modify_dialogue",
+            "add_warning",
+            "contextual_review",
+            "ignore_with_reason"
+          ],
+          "title": "Suggested Action",
+          "type": "string"
+        },
+        "suggested_translation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggested Translation"
+        },
+        "missing_context": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Context",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit_id",
+        "category",
+        "trigger_spans",
+        "severity_proposal",
+        "confidence_basis",
+        "evidence_status",
+        "explanation",
+        "suggested_action"
+      ],
+      "title": "LLMCultureIssue",
+      "type": "object"
+    },
+    "LLMTriggerSpan": {
+      "additionalProperties": false,
+      "description": "LLM 输出的触发跨度",
+      "properties": {
+        "source_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Span"
+        },
+        "target_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Span"
+        },
+        "start_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Char"
+        },
+        "end_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Char"
+        }
+      },
+      "title": "LLMTriggerSpan",
+      "type": "object"
+    },
+    "UncheckedUnit": {
+      "additionalProperties": false,
+      "description": "未检单元记录",
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit_id",
+        "reason"
+      ],
+      "title": "UncheckedUnit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "LLM 响应根对象",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/LLMCultureIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "checked_unit_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Checked Unit Ids",
+      "type": "array"
+    },
+    "unchecked_units": {
+      "items": {
+        "$ref": "#/$defs/UncheckedUnit"
+      },
+      "title": "Unchecked Units",
+      "type": "array"
+    },
+    "coverage_limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Coverage Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "issues",
+    "checked_unit_ids",
+    "unchecked_units",
+    "coverage_limitations"
+  ],
+  "title": "LLMCultureCheckOutput",
+  "type": "object"
+}

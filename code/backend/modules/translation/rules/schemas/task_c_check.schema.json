@@ -1,0 +1,131 @@
+{
+  "$defs": {
+    "PromptCheckIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "omission",
+            "addition",
+            "number",
+            "negation",
+            "entity",
+            "relationship",
+            "address",
+            "context",
+            "other"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "BLOCK",
+            "WARN",
+            "INFO"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Span"
+        },
+        "target_span": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Span"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "suggestion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggestion"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        }
+      },
+      "required": [
+        "unit_id",
+        "category",
+        "severity",
+        "detail"
+      ],
+      "title": "PromptCheckIssue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/PromptCheckIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "qe_status": {
+      "anyOf": [
+        {
+          "const": "未评估",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Qe Status"
+    }
+  },
+  "required": [
+    "issues"
+  ],
+  "title": "PromptCheckOutput",
+  "type": "object"
+}

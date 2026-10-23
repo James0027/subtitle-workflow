@@ -1,0 +1,14 @@
+请对以下按时间排序的源语语音转写切片进行对话整理，提出发音人划分、角色候选映射及疑点提示。
+
+源语言：{source_language}
+任务编号：{task_ref}（修订版本：{task_revision}）
+
+原始切片输入：
+{source_refs_json}
+
+辅助参考资料（可选）：
+{context_refs_json}
+
+请严格按约定的 JSON 结构输出 speakers, utterances, operations, issues。
+若无确凿证据判定具体角色名，character_ref 必须置为 null。
+跨切片合并的语句，其 source_spans 必须如实保留所有来源切片引用。

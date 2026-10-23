@@ -1,0 +1,25 @@
+请对以下已人工确认的源语台词单元进行逐句初翻：
+
+源语言：{source_language}
+目标语言：{target_language}
+用户选择的目标市场：{target_market}
+源稿修订版本：{source_revision}
+
+项目确认锁词表（必须严格遵守）：
+{locked_terms_json}
+
+角色与场景背景（仅供语境参考）：
+{character_context_json}
+
+待翻译台词单元：
+{units_json}
+
+请按 JSON 格式返回 translations，包含 unit_id, translation, term_hits, brief_source_paraphrase, issues。
+
+相关场景资料（缺失时不编造）：
+{scene_context_json}
+
+同作品/同任务、同语言市场的已人工确认历史译法（有引用，不能覆盖当前锁词）：
+{history_context_json}
+
+units中的prev_units/next_units分别只提供前后最多两条，全部只作为理解语境，不增加当前译文内容。

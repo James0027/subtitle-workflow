@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T1.1 素材接收与准备 · 快手字幕系统</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <p class="eyebrow">T1.1 · 本地素材接收与任务版本存取工作台</p>
+        <h1>素材入库、多轨/独立音频核验与双重人工确认</h1>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <div id="operatorBadge" class="operator-badge">
+          <span style="font-size:12px; color:var(--text-muted);">操作人：</span>
+          <strong id="operatorNameText">检测中...</strong>
+          <button id="btnSwitchOperator" class="button secondary small" style="margin-left:8px; padding:2px 8px; font-size:11px;">切换</button>
+        </div>
+        <span id="taskStatusTag" class="tag tag-neutral">未加载任务</span>
+      </div>
+    </header>
+
+    <!-- Registration / Login Modal if not logged in -->
+    <div id="modalOperatorSetup" class="modal-backdrop" style="display: none;">
+      <div class="modal-card">
+        <h3>本地操作人登记 / 登录</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          字幕工程操作与人工确认必须由真实本地操作人员负责，杜绝客户端随意伪造身份。
+        </p>
+        <div id="existingOperatorsBox" style="margin-bottom: 16px; display: none;">
+          <label class="field">
+            <span>选择已登记操作人</span>
+            <select id="selectExistingOperator"></select>
+          </label>
+          <button id="btnLoginOperator" class="button secondary" style="width: 100%;">以选中操作人登录</button>
+          <div style="text-align: center; margin: 12px 0; font-size: 12px; color: var(--text-muted);">— 或登记新操作人 —</div>
+        </div>
+        <label class="field">
+          <span>真实姓名 / 操作人代号</span>
+          <input type="text" id="inputNewOperatorName" placeholder="例如：张工 / 张三">
+        </label>
+        <label class="field">
+          <span>角色岗位</span>
+          <select id="selectNewOperatorRole">
+            <option value="media_operator">素材操作员 (media_operator)</option>
+            <option value="task_owner">任务负责人 (task_owner)</option>
+            <option value="reviewer">审校人员 (reviewer)</option>
+          </select>
+        </label>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px;">
+          <button id="btnRegisterOperator" class="button primary">完成登记并开启会话</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>工程规格约束：</strong>单文件上限 500MiB，处理范围上限 10 分钟（无静默截断）；ffprobe 真实探测 + ffmpeg 全流解码；单 worker 抽轨派生与防重；母版与任务单分别由真人操作员确认；草稿未确认严禁启动 ASR。
+    </div>
+
+    <!-- Panel 1: Task Draft -->
+    <section class="panel" id="panelTask">
+      <div class="panel-head">
+        <h2>1. 任务草稿创建与稳定标识</h2>
+        <span id="taskRevisionText" class="tag tag-neutral">Revision: -</span>
+      </div>
+      <div class="field-grid">
+        <label class="field">
+          <span>项目 ID</span>
+          <input type="text" id="inputProject" value="PRJ-DEFAULT" readonly>
+        </label>
+        <label class="field">
+          <span>防重 Request Key</span>
+          <input type="text" id="inputRequestKey" value="REQ-20261021-001">
+        </label>
+        <label class="field">
+          <span>作品与集数</span>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="inputTitle" value="国内短剧-冰雪之誓" placeholder="作品名称">
+            <input type="text" id="inputEpisode" value="EP01" placeholder="集数">
+          </div>
+        </label>
+        <label class="field">
+          <span>源语言地区</span>
+          <input type="text" id="inputLocale" value="zh-CN">
+        </label>
+        <label class="field">
+          <span>处理路线</span>
+          <select id="inputRoute">
+            <option value="transcribe">从零转写 (transcribe)</option>
+            <option value="verify_existing">已有字幕核对 (verify_existing)</option>
+            <option value="align_existing">已有字幕对齐 (align_existing)</option>
+          </select>
+        </label>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button class="button primary" id="btnCreateTask">创建 / 加载任务草稿</button>
+        <span id="activeTaskIdText" style="font-weight: bold; font-size: 14px; color: var(--primary-color);"></span>
+      </div>
+    </section>
+
+    <!-- Panel 2: File Upload & Technical Inspection -->
+    <section class="panel" id="panelUpload">
+      <div class="panel-head">
+        <h2>2. 素材上传与真实工程探测 (ffprobe + 全解码校验)</h2>
+        <span class="tag tag-neutral">限额: 500MiB / 10分钟</span>
+      </div>
+      <div class="field-grid">
+        <label class="field">
+          <span>主视频文件 (MP4 / MOV / MKV)</span>
+          <input type="file" id="fileVideo" accept="video/*">
+        </label>
+        <label class="field">
+          <span>可选独立音频文件 (WAV / MP3 / M4A)</span>
+          <input type="file" id="fileAudio" accept="audio/*">
+        </label>
+        <label class="field">
+          <span>授权引用 (rights_ref) <span style="color:red">*</span></span>
+          <input type="text" id="inputRightsRef" value="" placeholder="必填：请输入真实有效的授权编号/凭据">
+        </label>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+        <button class="button primary" id="btnUploadVideo">上传主视频并探测</button>
+        <button class="button secondary" id="btnUploadAudio">上传独立音频并探测</button>
+        <span id="uploadStatusText" style="font-size: 13px;"></span>
+      </div>
+
+      <!-- Video Inspection Details -->
+      <div id="videoInspectionBox" style="display: none; background: #f6f8fa; padding: 16px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+        <h3 style="font-size: 14px; margin-bottom: 8px;">主视频技术检查结果：</h3>
+        <div class="field-grid" style="margin-bottom: 8px;">
+          <div class="field"><span>时长 (ms)</span><input type="text" id="inspDuration" readonly></div>
+          <div class="field"><span>解码完整性</span><input type="text" id="inspDecode" readonly></div>
+          <div class="field"><span>声音存在性</span><input type="text" id="inspSound" readonly></div>
+          <div class="field"><span>视频画面信息</span><input type="text" id="inspVideoInfo" readonly></div>
+        </div>
+      </div>
+
+      <!-- Independent Audio Inspection Details -->
+      <div id="audioInspectionBox" style="display: none; background: #f6f8fa; padding: 16px; border-radius: 6px; border: 1px solid var(--border-color);">
+        <h3 style="font-size: 14px; margin-bottom: 8px;">独立音频技术检查结果：</h3>
+        <div class="field-grid">
+          <div class="field"><span>时长 (ms)</span><input type="text" id="inspAudioDuration" readonly></div>
+          <div class="field"><span>解码完整性</span><input type="text" id="inspAudioDecode" readonly></div>
+          <div class="field"><span>采样率 / 声道</span><input type="text" id="inspAudioInfo" readonly></div>
+          <div class="field"><span>资产 ID</span><input type="text" id="inspAudioAssetId" readonly></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 2.5: Auxiliary Materials Registration (Script / Character / Term / Subtitle) -->
+    <section class="panel" id="panelAuxiliary">
+      <div class="panel-head">
+        <h2>2.5 辅助资料登记 (剧本 / 角色表 / 术语表 / 已有字幕)</h2>
+        <span class="tag tag-neutral">本批只接收登记，不解析内容</span>
+      </div>
+      <div class="field-grid">
+        <label class="field">
+          <span>辅助资料文件 (TXT / DOCX / PDF / CSV / JSON / SRT / VTT)</span>
+          <input type="file" id="fileAuxiliary">
+        </label>
+        <label class="field">
+          <span>资料类型 (kind)</span>
+          <select id="selectAuxKind">
+            <option value="script">剧本 / 台词本 (script)</option>
+            <option value="character_list">角色表 (character_list)</option>
+            <option value="terminology">术语表 (terminology)</option>
+            <option value="existing_subtitle">已有字幕 (existing_subtitle)</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>授权引用 / 备注 <span style="color:red">*</span></span>
+          <input type="text" id="inputAuxRightsRef" value="" placeholder="必填：请输入辅助资料有效授权凭证">
+        </label>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+        <button class="button secondary" id="btnUploadAuxiliary">上传并登记辅助资料</button>
+        <span id="auxStatusText" style="font-size: 13px;"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="tableAuxiliary">
+          <thead>
+            <tr>
+              <th>资产 ID</th>
+              <th>种类</th>
+              <th>文件大小</th>
+              <th>SHA256 (前16位)</th>
+              <th>登记状态</th>
+            </tr>
+          </thead>
+          <tbody id="auxTbody">
+            <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">暂无已登记辅助资料</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Panel 3: Multi-track List & Audio Source Selection -->
+    <section class="panel" id="panelAudioTrack">
+      <div class="panel-head">
+        <h2>3. 主声音来源核验与选定 (多轨抽取 vs 独立音频选用)</h2>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        单轨且无独立音频时可预选；多轨或同时有独立音频时必须由人明确选择。选定视频轨后单 Worker 抽轨派生 PCM WAV；选定独立音频则直接绑定为主声音。
+      </p>
+
+      <div id="multiTrackNotice" style="display:none; padding:10px 14px; background:#fff8c5; border:1px solid #d4a72c; border-radius:6px; margin-bottom:12px; font-size:13px; color:#573a08;">
+        <strong>注意：</strong>检测到视频包含多条内嵌音轨，系统禁止默认预选首轨。请人工试听并明确点选主音轨后方可开始抽轨。
+      </div>
+
+      <!-- Selection Mode -->
+      <div style="margin-bottom: 16px; display: flex; gap: 20px; align-items: center;">
+        <label style="font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="radio" name="audioSourceType" value="video_track" checked id="radioSourceVideo">
+          <strong>使用视频内嵌音轨 (抽轨派生)</strong>
+        </label>
+        <label style="font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="radio" name="audioSourceType" value="independent_audio" id="radioSourceAudio">
+          <strong>使用独立上传音频文件作为主声音</strong>
+        </label>
+      </div>
+
+      <!-- Video Tracks Table -->
+      <div id="videoTracksWrap" class="table-wrap">
+        <table id="audioTrackTable">
+          <thead>
+            <tr>
+              <th>选择</th>
+              <th>Stream 序号</th>
+              <th>编码格式</th>
+              <th>声道</th>
+              <th>采样率</th>
+              <th>语言标签</th>
+              <th>说明 / 标题</th>
+            </tr>
+          </thead>
+          <tbody id="audioTrackTbody">
+            <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">尚未上传视频或未探测到音轨</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Action Button -->
+      <div style="margin-top: 16px; display: flex; gap: 12px; align-items: center;">
+        <button class="button primary" id="btnPrepareAudio" disabled>准备所选主声音</button>
+        <span id="prepareAudioResultText" style="font-size: 13px;"></span>
+      </div>
+    </section>
+
+    <!-- Panel 4: Video-Audio Synchronized Comparison Player -->
+    <section class="panel" id="panelComparison">
+      <div class="panel-head">
+        <h2>4. 音画对照播放 (共用母版时间轴 · 防串音切换回听)</h2>
+      </div>
+      <div style="margin-bottom: 12px; display: flex; gap: 16px; align-items: center;">
+        <span style="font-size: 13px; font-weight: bold;">回听声音选择：</span>
+        <label style="font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="radio" name="playbackAudition" value="video_audio" checked id="radioAuditionVideo">
+          <span>视频内嵌原声音 (静音所选音频)</span>
+        </label>
+        <label style="font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="radio" name="playbackAudition" value="primary_audio" id="radioAuditionPrimary">
+          <span>选用主音频 (静音视频原声)</span>
+        </label>
+      </div>
+
+      <div class="grid-two">
+        <div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">母版视频预览</h3>
+          <div class="player-box">
+            <video id="videoPlayer" controls></video>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">选定主音频试听</h3>
+          <div style="background: #fff; padding: 20px; border: 1px solid var(--border-color); border-radius: 6px; min-height: 220px; display:flex; flex-direction:column; justify-content:center;">
+            <p id="audioInfoText" style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">尚未准备或选用主声音</p>
+            <audio id="audioPlayer" controls></audio>
+            <div style="margin-top: 16px; display: flex; gap: 8px;">
+              <button class="button secondary" id="btnSeekStart">跳至开头 (00:00)</button>
+              <button class="button secondary" id="btnSeekMid">跳至中间</button>
+              <button class="button secondary" id="btnSeekEnd">跳至结尾</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 5: Real Material Checklist -->
+    <section class="panel" id="panelChecklist">
+      <div class="panel-head">
+        <h2>5. 真实素材检查单 (服务端核验客观依据)</h2>
+        <span class="tag tag-ok">客观真实证据</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>核对项目</th>
+              <th>要求依据</th>
+              <th>实测结果</th>
+              <th>判定结论</th>
+            </tr>
+          </thead>
+          <tbody id="checklistTbody">
+            <tr>
+              <td>片名与集数</td>
+              <td>标题与集数明确匹配</td>
+              <td id="chkTitleVal">-</td>
+              <td id="chkTitleRes"><span class="tag tag-neutral">待登记</span></td>
+            </tr>
+            <tr>
+              <td>媒体时长与范围</td>
+              <td>处理时长在 10 分钟以内 (<=600,000ms)</td>
+              <td id="chkDurationVal">-</td>
+              <td id="chkDurationRes"><span class="tag tag-neutral">待检测</span></td>
+            </tr>
+            <tr>
+              <td>真实可解码性</td>
+              <td>FFmpeg null-muxer 全流无损坏</td>
+              <td id="chkDecodeVal">-</td>
+              <td id="chkDecodeRes"><span class="tag tag-neutral">待检测</span></td>
+            </tr>
+            <tr>
+              <td>主声音可用性</td>
+              <td>音轨存在且已完成派生或独立音频映射</td>
+              <td id="chkAudioVal">-</td>
+              <td id="chkAudioRes"><span class="tag tag-neutral">待选定</span></td>
+            </tr>
+            <tr>
+              <td>授权凭证 (rights_ref)</td>
+              <td>非空且符合项目授权范围</td>
+              <td id="chkRightsVal">-</td>
+              <td id="chkRightsRes"><span class="tag tag-neutral">待提交</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Panel 6: Confirmations & Handover Gate -->
+    <section class="panel" id="panelConfirm">
+      <div class="panel-head">
+        <h2>6. 母版与任务双重确认 · 门禁把关</h2>
+      </div>
+      <div class="field-grid">
+        <div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">阶段一：母版人工确认 (confirm_master)</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            由真实操作人员在试听核验后确认音画匹配。禁止服务主体代签，存在未检或失败项时服务器将拦截。
+          </p>
+          <button class="button primary" id="btnConfirmMaster" disabled>1. 人工确认母版</button>
+          <div id="masterConfirmStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">阶段二：任务单人工确认 (confirm_task)</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            母版确认后，由操作员锁定任务处理范围与要求，进入 READY 状态。
+          </p>
+          <button class="button primary" id="btnConfirmTask" disabled>2. 人工确认任务单</button>
+          <div id="taskConfirmStatus" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">阶段三：就绪状态检查</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            验证草稿期严禁启动 ASR；确认后方可通过阶段门禁。
+          </p>
+          <button class="button secondary" id="btnCheckReadiness">检查任务就绪状态 (readiness)</button>
+          <div id="gateStatusText" style="font-size: 13px; margin-top: 8px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 8: ASR Slicing, Transcription & Quality Review (T2.1) -->
+    <section class="panel" id="panelASR">
+      <div class="panel-head">
+        <h2>8. ASR 固定切片转写与五项质量复核 (T2.1 工程增量)</h2>
+        <span class="tag tag-neutral" id="asrHeaderStatusBadge">待切片/待转写</span>
+      </div>
+
+      <!-- 8.1 Cloud API Adapter & Authorization Boundaries -->
+      <div style="background: #f6f8fa; border: 1px solid var(--border-color); border-radius: 6px; padding: 14px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 14px; margin: 0;">云端 API 适配器与调用授权状态</h3>
+          <span class="tag tag-warning" id="cloudAuthBadge">待配置/待授权</span>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;" id="cloudAuthMsg">
+          本次工程批次未授权实际素材外传或云端调用。云接口适配器与配置流程已就绪，但阻断未经授权的外传与收费。
+        </p>
+        <div style="display: flex; gap: 16px; font-size: 12px; flex-wrap: wrap;">
+          <div><strong>候选模型：</strong><code id="asrModelId">gemini-2.5-flash</code> (Flash候选/结构化输出)</div>
+          <div><strong>API Key：</strong><span id="asrKeyStatus" class="tag tag-neutral">检测中...</span></div>
+          <div><strong>素材外传许可：</strong><span id="asrOutboundStatus" class="tag tag-danger">未授权 (阻断调用)</span></div>
+          <div><strong>预算费用许可：</strong><span id="asrBudgetStatus" class="tag tag-danger">未授权 (阻断计费)</span></div>
+        </div>
+      </div>
+
+      <!-- 8.2 Fixed 10s Audio Slicing & Quality Stats -->
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 14px; margin: 0;">8.2 固定 10 秒切片与真实音质测量 (FFmpeg astats / silencedetect)</h3>
+          <button class="button primary" id="btnSliceAudio">执行 10 秒本地切片与音质统计</button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+          固定 10.0 秒切片，尾片保留真实长度；精确映射母版 Offset 与片内 SHA-256。真实测量峰值电平、RMS 响度与静音/削波风险；未测项（SNR/P95/校准分）如实标明未测。
+        </p>
+        <div id="sliceStatusText" style="font-size: 13px; margin-bottom: 8px;"></div>
+        <div class="table-wrap">
+          <table id="tableChunks">
+            <thead>
+              <tr>
+                <th>切片编号</th>
+                <th>母版区间 (Offset)</th>
+                <th>真实时长</th>
+                <th>SHA-256 校验和</th>
+                <th>实测峰值 / RMS</th>
+                <th>削波 / 静音风险</th>
+                <th>未测项提示</th>
+                <th>切片试听</th>
+              </tr>
+            </thead>
+            <tbody id="chunksTbody">
+              <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">尚未执行音频切片</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8.3 ASR Transcription Execution & Review -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 14px; margin: 0;">8.3 源语忠实转写结果、时间对齐与质量复核</h3>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="button primary" id="btnTranscribeASR">执行 ASR 转写 (Gemini 适配)</button>
+          </div>
+        </div>
+        <div id="transcribeStatusText" style="font-size: 13px; margin-bottom: 10px;"></div>
+
+        <!-- Issues and Warnings Block -->
+        <div id="asrIssuesBox" style="display: none; background: #fff8e6; border: 1px solid #ffd591; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+          <h4 style="font-size: 13px; margin: 0 0 6px 0; color: #d46b08;">质量疑点与跨片切点预警 (共 <span id="issuesCount">0</span> 项)</h4>
+          <ul id="issuesList" style="margin: 0; padding-left: 20px; font-size: 12px; color: #873800;"></ul>
+        </div>
+
+        <!-- Overlap Candidates & Entity Candidates Summary -->
+        <div class="field-grid" style="margin-bottom: 12px;">
+          <div style="background: #f6f8fa; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px;">
+            <h4 style="font-size: 13px; margin: 0 0 6px 0;">重叠说话风险候选 (overlap_candidates)</h4>
+            <div id="overlapCandidatesList" style="font-size: 12px; color: var(--text-muted);">暂无重叠说话风险</div>
+          </div>
+          <div style="background: #f6f8fa; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px;">
+            <h4 style="font-size: 13px; margin: 0 0 6px 0;">专名候选与词表匹配 (entity_candidates)</h4>
+            <div id="entityCandidatesList" style="font-size: 12px; color: var(--text-muted);">暂无专名候选</div>
+          </div>
+        </div>
+
+        <!-- Transcribed Candidates List & Manual Edit -->
+        <div class="table-wrap">
+          <table id="tableCandidates">
+            <thead>
+              <tr>
+                <th style="width: 100px;">序号 / ID</th>
+                <th style="width: 140px;">母版时间轴</th>
+                <th>忠实转写源语文字 (可人工编辑)</th>
+                <th style="width: 120px;">置信度标签</th>
+                <th style="width: 120px;">回听与校对</th>
+                <th style="width: 100px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="candidatesTbody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚未执行语音转写</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel 8: Source Cleanup & Gate 1 (任务A与第一人工关口) -->
+    <section class="panel" id="panelSourceCleanup">
+      <div class="panel-head">
+        <h2>8. 源语整理、说话人候选与第一人工关口 (Task A & Gate 1)</h2>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span id="sourceRevisionBadge" class="tag tag-neutral">源稿版本: -</span>
+          <span id="sourceStatusBadge" class="tag tag-neutral">未启动</span>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        仅整理指定范围的原话，跨切片合并保留多父切片来源；匿名区分说话人，确凿依据才映射角色名（无证据必须保持未知）。<strong>第一人工关口：</strong>可编辑台词、调整角色映射、处理疑点，确认后方可解锁初翻！
+      </p>
+      <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
+        <button id="btnRunSourceCleanup" class="button primary">运行源语整理 (Task A)</button>
+        <button id="btnReloadSourceTranscript" class="button secondary">刷新源语稿</button>
+        <div style="flex: 1;"></div>
+        <button id="btnConfirmSourceTranscript" class="button success" style="font-weight: bold;">
+          ✓ 人工确认源语稿 (Gate 1 签署通过)
+        </button>
+      </div>
+
+      <!-- Speakers list -->
+      <div style="margin-bottom: 16px; background: var(--bg-surface); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+        <strong style="font-size: 13px;">发音人与角色建议 (Speakers & Characters):</strong>
+        <div id="speakersContainer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+          <span style="font-size: 12px; color: var(--text-muted);">暂无说话人候选</span>
+        </div>
+      </div>
+
+      <!-- Utterances table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">单元ID</th>
+              <th style="width: 130px;">说话人 / 角色</th>
+              <th>忠实源语台词 (可直接在线修改)</th>
+              <th style="width: 140px;">来源切片追溯</th>
+              <th style="width: 120px;">疑点 / 状态</th>
+              <th style="width: 90px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="sourceUtterancesTbody">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚未执行源语整理</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Panel 9: Knowledge Base & Memory (简单知识库与锁词) -->
+    <section class="panel" id="panelKnowledge">
+      <p>术语按第10节当前选择的目标市场保存；角色和场景资料不绑定目标语言。<a href="#selectTargetMarket">查看或更换目标市场</a></p>
+      <div class="panel-head">
+        <h2>9. 项目知识库与强制锁词 (Knowledge & Locked Terms)</h2>
+        <span class="tag tag-neutral">SQLite 本地轻量持久化</span>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        管理项目角色表、场景背景及强制术语锁词。锁词将在初翻调用前被检索并注入 Prompt，初翻后由工程引擎强制比对，漏用直接阻断！
+      </p>
+      <div class="field-grid" style="grid-template-columns: 1fr 1fr 120px 100px auto; align-items: flex-end; margin-bottom: 12px;">
+        <label class="field">
+          <span>源词 / 专有名词</span>
+          <input type="text" id="inputKnowledgeSource" placeholder="例如：九转还魂丹">
+        </label>
+        <label class="field">
+          <span>目标语译法</span>
+          <input type="text" id="inputKnowledgeTarget" placeholder="例如：Nine-Soul Reversion Pill">
+        </label>
+        <label class="field">
+          <span>分类</span>
+          <select id="selectKnowledgeCategory">
+            <option value="glossary">术语表 (glossary)</option>
+            <option value="character">角色表 (character)</option>
+            <option value="scene">场景剧情 (scene)</option>
+          </select>
+        </label>
+        <label class="field" style="display: flex; flex-direction: column; justify-content: center;">
+          <span>强制锁词</span>
+          <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; cursor: pointer; margin-top: 8px;">
+            <input type="checkbox" id="checkKnowledgeLocked" checked>
+            <strong>锁定</strong>
+          </label>
+        </label>
+        <div>
+          <button id="btnAddKnowledgeItem" class="button secondary" style="height: 38px;">添加词条</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 100px;">类别</th>
+              <th>源语内容</th>
+              <th>要求译法</th>
+              <th style="width: 90px;">锁定状态</th>
+              <th style="width: 90px;">条目状态</th>
+              <th style="width: 80px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="knowledgeTbody">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">暂无知识条目</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Panel 10: Task B Translation, Task C Checks & Gate 2 (初翻生成、语义检查与第二人工关口) -->
+    <section class="panel" id="panelTranslation">
+      <div class="panel-head">
+        <h2>10. 出海初翻生成、语义一致性检查与第二人工关口 (Task B/C & Gate 2)</h2>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span id="translationSourceRevBadge" class="tag tag-neutral">读入源版本: -</span>
+          <span id="qeStatusBadge" class="tag tag-neutral">QE: 未评估</span>
+          <button id="btnCultureJump" class="button secondary small">→ 文化检测复核</button>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+        初翻仅读取<strong>已人工确认</strong>的源语稿版本；提供前后各2句辅助上下文；严格遵守锁词。语义检查引擎独立判定锁词漏用（BLOCK阻断）、数字与否定倒置（WARN报警）。<strong>第二人工关口：</strong>支持逐句校对、锁定保护（防止AI重跑覆盖）与逐句历史回滚。
+      </p>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-end;">
+        <label class="field" style="margin-bottom: 0;">
+          <span>目标市场 (必须由用户选择，严禁硬编码默认)</span>
+          <select id="selectTargetMarket" style="width: 240px;">
+            <option value="MX">MX (墨西哥 / es-MX，文化检测试点)</option>
+            <option value="US">US (美国 / 通用英语)</option>
+            <option value="LATAM">LATAM (拉美西语市场)</option>
+            <option value="ES">ES (西班牙 / 欧洲西语)</option>
+            <option value="ID">ID (印尼市场)</option>
+            <option value="BR">BR (巴西葡语市场)</option>
+          </select>
+        </label>
+        <button id="btnGenerateTranslation" class="button primary">
+          生成初翻并执行语义检查 (Task B & C)
+        </button>
+        <button id="btnReloadTranslations" class="button secondary">刷新译文</button>
+        <div style="flex: 1;"></div>
+        <button id="btnConfirmAllTranslations" class="button success" style="font-weight: bold;">
+          ✓ 全部确认初翻 (Gate 2 批量签署)
+        </button>
+      </div>
+
+      <div id="translationAlertBox" style="display: none; margin-bottom: 16px;"></div>
+
+      <!-- Translations table -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">单元ID</th>
+              <th style="width: 240px;">已确认源语台词</th>
+              <th>目标语初翻译文 (支持在线编辑)</th>
+              <th style="width: 140px;">锁词命中情况</th>
+              <th style="width: 150px;">语义检查报警</th>
+              <th style="width: 180px;">人工审校与回滚</th>
+            </tr>
+          </thead>
+          <tbody id="translationsTbody">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">尚未生成初翻</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Technical Manifest Drawer (Folded by default) -->
+      <details style="margin-top: 16px; background: var(--bg-surface); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+        <summary style="cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-muted);">
+          查看技术来源与调用凭证清单 (Manifest & Token Usage)
+        </summary>
+        <div id="manifestContentBox" style="margin-top: 8px; font-family: monospace; font-size: 12px; white-space: pre-wrap; color: var(--text-main);">
+          暂无调用清单
+        </div>
+      </details>
+    </section>
+
+    <section class="panel" id="panelCulture">
+      <div class="panel-head"><h2>11. 墨西哥文化检测与人工审阅</h2></div>
+      <p>仅检测已人工确认的墨西哥西语译稿。AI 结果是风险建议，不代表整片合规；规则候选待核，缺画面、渠道或受众时会显示限制。</p>
+      <div style="display:flex;gap:12px;margin:12px 0"><button id="btnCultureCheck" class="button primary">运行文化检测</button><button id="btnCultureRefresh" class="button secondary">刷新风险</button><a href="#panelTranslation">到初翻修改或回滚，再确认复检</a></div>
+      <p id="cultureSummary" style="font-size:13px; font-weight:bold;">红线 P0 0 项 · 黄线 P1 0 项 · 提示 P2 0 项</p>
+      <p id="cultureMessage" role="status">尚未检测</p>
+      <div id="cultureIssues"></div>
+      <p style="font-size:12px; color:var(--text-muted);">风险点按红线(P0)/黄线(P1)/提示(P2)分组展示，触发位置高亮原文跨度。「确认风险/驳回风险」只裁决 AI 候选；「采纳建议改写（到初翻）」仅把建议文本预填到初翻编辑框，升版仍走初翻审阅的 expected_revision 契约，保存后需重新确认并复检，文化模块不写译文。</p>
+      <details><summary>检测范围、版本与调用依据</summary><pre id="cultureManifest" style="white-space:pre-wrap">暂无记录</pre></details>
+    </section>
+
+    <section class="panel" id="panelDelivery">
+      <div class="panel-head"><h2>12. 单位、口语与受控交付</h2><button id="btnDeliveryRefresh" class="button secondary">刷新</button></div>
+      <p>读取当前人工确认稿。单位和口语检查为规则候选，不会覆盖人工稿；接受建议请回到初翻编辑、确认并重新检测。签发就绪不代表已经发布。</p>
+      <label>当前任务 <select id="deliveryTaskSelect"><option value="">请选择任务</option></select></label>
+      <p id="deliveryStatus" role="status">尚未加载</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="btnUnitPreview" class="button secondary">检查单位格式</button><button id="btnOralPreview" class="button secondary">规则口语审阅</button><button id="btnDeliveryValidate" class="button primary">技术质检</button><button id="btnDeliverySign" class="button success" disabled>真人签发</button><button id="btnDeliveryDownload" class="button secondary" disabled>下载已签发字幕</button><a href="#panelTranslation">修改、确认或回滚译稿</a></div>
+      <div id="deliverySummary" style="white-space:pre-wrap;margin-top:12px"></div>
+      <details><summary>候选、检查与版本依据</summary><pre id="deliveryDetails" style="white-space:pre-wrap;max-height:420px;overflow:auto"></pre></details>
+    </section>
+
+    <!-- Panel 11: Audit Trace & Events -->
+    <section class="panel" id="panelTrace">
+      <div class="panel-head">
+        <h2>7. 审计留痕与事件流 (Events / Decisions / Runs)</h2>
+        <button class="button secondary" id="btnRefreshTrace">刷新审计日志</button>
+      </div>
+      <div class="log-box" id="traceLogBox">暂无审计记录</div>
+    </section>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

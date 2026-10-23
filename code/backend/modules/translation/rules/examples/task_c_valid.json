@@ -1,0 +1,18 @@
+{
+  "issues": [
+    {
+      "check_id": "chk_iss_001",
+      "unit_id": "u_002",
+      "category": "number",
+      "severity": "WARN",
+      "source_span": "三年",
+      "target_span": "two years",
+      "evidence_refs": ["u_002"],
+      "detail": "原句为'三年'，译文误写为'two years'，数字存在事实偏差",
+      "suggestion": "修改为'three years'",
+      "uncertainty": null,
+      "status": "OPEN"
+    }
+  ],
+  "qe_status": "未评估"
+}

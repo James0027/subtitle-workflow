@@ -1,0 +1,9 @@
+{
+  "issues": [
+    {
+      "unit_id": "u_002",
+      "category": "invalid_category_not_in_enum",
+      "severity": "CRITICAL_NOT_ALLOWED"
+    }
+  ]
+}

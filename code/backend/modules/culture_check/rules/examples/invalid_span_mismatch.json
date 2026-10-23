@@ -1,0 +1,23 @@
+{
+  "unit_id": "u_001",
+  "category": "local_taboo",
+  "trigger_spans": [
+    {
+      "source_span": "原台词根本没有这句话",
+      "target_span": "palabra inexistente en subtitulo"
+    }
+  ],
+  "severity_proposal": "P2",
+  "impact_level": 1,
+  "occurrence_likelihood": 1,
+  "remediation_difficulty": 1,
+  "confidence": {
+    "raw_score": 0.5,
+    "calibrated_score": null,
+    "basis": "幻觉跨度"
+  },
+  "rule_refs": ["R-MX-TABOO-01"],
+  "evidence_status": "insufficient",
+  "explanation": "触发片段并非真实台词子串，跨度校验必须拒绝",
+  "suggested_action": "modify_dialogue"
+}

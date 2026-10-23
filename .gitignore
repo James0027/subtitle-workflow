@@ -18,6 +18,7 @@ build/
 .coverage
 htmlcov/
 
+data/
 # Local media / outputs (not source deliverables)
 *.mp4
 *.mov
@@ -33,3 +34,8 @@ outputs/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local backups and duplicate verification source snapshots
+*.bak
+docs/08-test-reports/**/_snapshot_src/
+work/github-publish-20261023/

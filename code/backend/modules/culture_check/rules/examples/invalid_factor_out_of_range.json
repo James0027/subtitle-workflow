@@ -1,0 +1,23 @@
+{
+  "unit_id": "u_001",
+  "category": "discrimination",
+  "trigger_spans": [
+    {
+      "source_span": "那个土包子下等人",
+      "target_span": "ese indio mugroso"
+    }
+  ],
+  "severity_proposal": "P1",
+  "impact_level": 5,
+  "occurrence_likelihood": 2,
+  "remediation_difficulty": 1,
+  "confidence": {
+    "raw_score": 0.8,
+    "calibrated_score": null,
+    "basis": "非法因子超限"
+  },
+  "rule_refs": ["R-MX-DISCRIM-01"],
+  "evidence_status": "sufficient",
+  "explanation": "impact_level 为 5 超出了 1..3 范围，因子校验必须报错",
+  "suggested_action": "modify_dialogue"
+}

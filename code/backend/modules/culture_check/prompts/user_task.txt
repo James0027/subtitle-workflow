@@ -1,0 +1,22 @@
+【审查任务基本信息】
+- Schema版本: {schema_version}
+- 任务ID: {task_ref}
+- 任务修订: {task_revision}
+- 源语言: {source_language}
+- 目标语言: {target_language}
+- 目标市场: {target_market}
+- 目标受众与渠道: 受众={target_audience}, 分级={target_rating}, 发行渠道={distribution_channel}, 缺失状态={missing_channel_or_audience}
+- 媒体证据覆盖: {media_coverage_json}
+
+【已检索适用的已核验规则 selected_rules】
+{rules_json}
+
+【非强制参考案例 case_refs】
+{cases_json}
+
+【待检字幕单元 units】
+（注意：邻近上下文 prev_units/next_units 仅辅助理解语义，严禁将邻近单元内容指派为当前单元的触发错误）
+{units_json}
+
+【输出指示】
+请逐条检查上述 units。输出唯一的 JSON 对象，包含 checked_unit_ids、unchecked_units、coverage_limitations 和 issues 列表。严格遵守 Schema 要求与字段枚举。

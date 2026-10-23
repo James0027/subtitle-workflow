@@ -1,0 +1,324 @@
+{
+  "$defs": {
+    "SourceCleanupIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        },
+        "unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Id"
+        },
+        "chunk_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Chunk Ids",
+          "type": "array"
+        },
+        "severity": {
+          "default": "WARN",
+          "enum": [
+            "BLOCK",
+            "WARN",
+            "INFO"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "detail"
+      ],
+      "title": "SourceCleanupIssue",
+      "type": "object"
+    },
+    "SourceCleanupOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "op": {
+          "description": "整理操作类型",
+          "enum": [
+            "stitch",
+            "split",
+            "punctuate",
+            "filter_noise"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "detail": {
+          "description": "操作说明",
+          "title": "Detail",
+          "type": "string"
+        },
+        "unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Id"
+        }
+      },
+      "required": [
+        "op",
+        "detail"
+      ],
+      "title": "SourceCleanupOperation",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "chunk_id": {
+          "description": "来源切片标识",
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "start_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "片段相对起始毫秒",
+          "title": "Start Ms"
+        },
+        "end_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "片段相对结束毫秒",
+          "title": "End Ms"
+        },
+        "original_text": {
+          "description": "切片中的原始忠实文字",
+          "title": "Original Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chunk_id",
+        "original_text"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "SourceUtterance": {
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {
+          "description": "整理后的对话单元编号，如 u_001",
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "整理后的源语忠实完整台词，保留原字，可修正跨切片标点与断句",
+          "title": "Text",
+          "type": "string"
+        },
+        "source_spans": {
+          "description": "回溯对应切片与原文区间；跨切片合并保留多个父引用",
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "minItems": 1,
+          "title": "Source Spans",
+          "type": "array"
+        },
+        "speaker_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "对应说话人编号",
+          "title": "Speaker Id"
+        },
+        "character_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "对应角色ID（有证据时由系统或人工填充）",
+          "title": "Character Ref"
+        },
+        "start_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "母本全局对齐起始毫秒；若无法精确定位则为null或切片粗起点",
+          "title": "Start Ms"
+        },
+        "end_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "母本全局对齐结束毫秒；若无法精确定位则为null或切片粗终点",
+          "title": "End Ms"
+        },
+        "timing_precision": {
+          "default": "chunk_fallback",
+          "description": "时间精度级别",
+          "enum": [
+            "word",
+            "phrase",
+            "chunk_fallback"
+          ],
+          "title": "Timing Precision",
+          "type": "string"
+        },
+        "uncertainties": {
+          "description": "疑点列表",
+          "items": {
+            "type": "string"
+          },
+          "title": "Uncertainties",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit_id",
+        "text",
+        "source_spans"
+      ],
+      "title": "SourceUtterance",
+      "type": "object"
+    },
+    "SpeakerCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "speaker_id": {
+          "description": "匿名或暂定说话人编号，如 spk_1, spk_2",
+          "title": "Speaker Id",
+          "type": "string"
+        },
+        "character_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "建议映射的角色ID；若无证据必须为 null/unknown，严禁主观凭声线臆测",
+          "title": "Character Ref"
+        },
+        "evidence_refs": {
+          "description": "判定依据（如台词直接呼告、自我介绍、切片ID）",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "uncertainties": {
+          "description": "说话人/角色疑点说明",
+          "items": {
+            "type": "string"
+          },
+          "title": "Uncertainties",
+          "type": "array"
+        }
+      },
+      "required": [
+        "speaker_id"
+      ],
+      "title": "SpeakerCandidate",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "description": "Schema版本",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "speakers": {
+      "items": {
+        "$ref": "#/$defs/SpeakerCandidate"
+      },
+      "title": "Speakers",
+      "type": "array"
+    },
+    "utterances": {
+      "items": {
+        "$ref": "#/$defs/SourceUtterance"
+      },
+      "title": "Utterances",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/SourceCleanupOperation"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "$ref": "#/$defs/SourceCleanupIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    }
+  },
+  "title": "SourceCleanupResult",
+  "type": "object"
+}

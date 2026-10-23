@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "PromptTermHit": {
+      "additionalProperties": false,
+      "properties": {
+        "source_term": {
+          "title": "Source Term",
+          "type": "string"
+        },
+        "required_target": {
+          "title": "Required Target",
+          "type": "string"
+        },
+        "actual_target": {
+          "title": "Actual Target",
+          "type": "string"
+        },
+        "term_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term Ref"
+        },
+        "matched": {
+          "title": "Matched",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_term",
+        "required_target",
+        "actual_target",
+        "matched"
+      ],
+      "title": "PromptTermHit",
+      "type": "object"
+    },
+    "PromptTranslation": {
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "translation": {
+          "title": "Translation",
+          "type": "string"
+        },
+        "term_hits": {
+          "items": {
+            "$ref": "#/$defs/PromptTermHit"
+          },
+          "title": "Term Hits",
+          "type": "array"
+        },
+        "brief_source_paraphrase": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Brief Source Paraphrase"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unit_id",
+        "translation",
+        "term_hits",
+        "brief_source_paraphrase",
+        "issues"
+      ],
+      "title": "PromptTranslation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "translations": {
+      "items": {
+        "$ref": "#/$defs/PromptTranslation"
+      },
+      "title": "Translations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "translations"
+  ],
+  "title": "PromptTranslationOutput",
+  "type": "object"
+}

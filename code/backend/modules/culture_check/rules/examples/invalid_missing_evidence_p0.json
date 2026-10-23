@@ -1,0 +1,24 @@
+{
+  "unit_id": "u_001",
+  "category": "legal_platform",
+  "trigger_spans": [
+    {
+      "source_span": "随便找个地方抽烟",
+      "target_span": "fumar un cigarro aquí"
+    }
+  ],
+  "severity_proposal": "P0",
+  "impact_level": 3,
+  "occurrence_likelihood": 1,
+  "remediation_difficulty": 1,
+  "confidence": {
+    "raw_score": 0.95,
+    "calibrated_score": null,
+    "basis": "模型主观认为公共场所吸烟为重大违法红线"
+  },
+  "rule_refs": [],
+  "evidence_refs": [],
+  "evidence_status": "insufficient",
+  "explanation": "模型主观拟提议P0阻断，但无任何法定生效法条编号及现场画面证据，必须被工程降级为P1",
+  "suggested_action": "block_release"
+}
