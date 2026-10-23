@@ -1,3 +1,5 @@
+> 2026-10-21当前决定：用户要求清除Whisper阶段实现，先确认音频理解框架与详细开发安排，再开发；既有业务PRD/原型/契约/测试设计保留复用。项目内asr-validation环境、模型、代码和运行产物已删除，本地旧服务已停止。下方Whisper派发/运行/URL均为历史，不得照其继续执行或重装。总体框架已确认，具体实现待评审，未调用Gemini、未外发素材、未收费、未开新工程。 新审阅入口：[框架与开发安排](docs/07-delivery-plans/main-delivery-plan-source-release.md)。
+
 # AGENTS.md — 项目统一入口
 
 适用于整个字幕项目及参与开发的AI。先从本文件定位任务，再读所需材料；用户当前明确要求优先。
@@ -6,6 +8,8 @@
 > 下游（引用我）：[项目导航](README.md)；[十二步产物清单](docs/README.md)；[基础定义](docs/03-foundation/README.md)；[当前进度](docs/00-process/00-02-progress/progress.md)；[项目技能](.agents/skills/subtitle-source-check/SKILL.md)。；[主PRD](docs/05-prd/mainprd.md)（全局目标、状态、权限及验收）
 
 ## 1. 项目说明
+
+> 2026-10-21最新分工/技术准备见[工程交接](docs/07-delivery-plans/antigravity-source-engineering-handoff.md)：软件方向由Codex依用户授权选定，Antigravity后续实现；AI内容共同逐项确认。当前仅准备未派发，安装/开发未启动，T0.1整体未完成。以下历史技术待定表述以该交接与唯一进度为准。
 
 - 产品：多语种字幕智能校对与文化适配系统，六处理模块与共享能力协作，保留人工审核/签发。
 - 业务范围权威：[BRD](docs/01-brd/BRD.md) §4；统计定义权威：[metrics](docs/03-foundation/metrics.md)。

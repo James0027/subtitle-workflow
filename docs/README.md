@@ -35,7 +35,7 @@
 | ⑧ 子PRD | 六模块与必要共享功能的输入输出、操作、工具、停止、兜底 | [十份子PRD索引](05-prd/README.md) | 十份正文草稿已建立，59条局部需求/177场景NOT_RUN；非正式TC |
 | ⑨ 计划与测试 | 里程碑/依赖/灰度/回滚/回归集及正常/异常/权限用例 | [源语实施计划](07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](06-testcase/tc-main-subtitle-workflow.md) | 首批源语准备稿已建立；8实现任务阻塞；174业务TC+6发布演练均NOT_RUN；[灰度/回滚](07-delivery-plans/main-delivery-plan-source-release.md#rollout)及[回归集](06-testcase/tc-main-subtitle-workflow.md#regression)已设计；多语实现计划未建立 |
 | ⑩ 开发 | 代码、配置、feature flag、事件埋点 | code/、config/ | 仅既有框架，非已实现 |
-| ⑪ 测试 | 离线/影子/灰度，准确/稳定/性能/安全/成本 | tests/、evals/；docs/08-test-reports（正式报告未建立） | 未执行业务或模型验收 |
+| ⑪ 测试 | 离线/影子/灰度，准确/稳定/性能/安全/成本 | tests/、evals/；[工单报告](08-test-reports/20261023-e2e-report/20261023-e2e-full-pipeline-report.md) | 六段式工程实测 6/6 通过（零模型、隔离库）；业务/模型验收未执行，174 条正式 TC 仍 NOT_RUN |
 | ⑫ 部署 | 版本、发布清单、监控、回滚、责任与运行手册 | docs/09-deploy（未建立） | 未部署 |
 
 `04-diagrams`为参考模板的辅助图示位置，有需要时建立，不是额外的第十三步。未开始阶段不提前创建空文档/目录凑产物。
@@ -52,6 +52,14 @@
 ## 4. 过程记录与辅助材料
 
 - 正式过程记录：[进度](00-process/00-02-progress/progress.md)、[20261019日志](00-process/00-01-logs/20261019.md)。
+- 2026-10-22 实机展示：[T1.1 全链路展示案例](08-test-reports/20261022-fullstack-demo/展示案例.md)，含 T1.1 收料→双确认、10 秒切片、Gemini 3.5 Flash Lite 转写（26 候选/9 预警）截图、实际落库 ID 与 7 项返修发现；只证明工程链路可用，不代表业务/模型质量验收。
+- 2026-10-22 报告合并：[验收报告合并与当前真实状态](08-test-reports/20261022/合并状态核对-20261022.md)，合并 T2.1/恢复/翻译/文化四份报告，列已核验状态、未修缺陷（F1/F2/F4）与状态文档偏差。
+- 2026-10-22 知识治理返修：[修复记录](08-test-reports/20261022/knowledge-governance-fix.md)，修复知识审计主体/市场语言校验/知识事件/迁移/前端转义与登录后加载；新增 6 项测试，全量 48 passed。
+- 2026-10-22 工单03 单位与格式本地化引擎：[交付报告](08-test-reports/20261022/ticket03-unit-format-engine.md)，实现实体抽取/跳步、确定性换算与反向验算、舍入控制、剧情例外硬锁（体温/密码/纪录/日期/货币）；模块 pytest 42 passed，全量 59 passed；仅工程自测，AC-UNIT 场景与正式 TC 仍 NOT_RUN。
+- 2026-10-22 工单04 口语适配与节奏审校引擎：[交付报告](08-test-reports/20261022/ticket04-oral-review-engine.md)，实现 CPS/行长/时长可读性度量、复杂句打标与时间守恒无损拆句、30 组书面语→es-MX 口语词库与 written_score、四重语义保护硬闸门（否定极性/事实实体/关系称谓/情绪反讽）；模块 pytest 84 passed，全量 59 passed；零模型（manifest 标 model_used=false、token_used=0），仅工程自测，AC-ORAL 场景与正式 TC 仍 NOT_RUN。
+- 2026-10-22 工单05A 平台合规质检与导出引擎：[交付报告](08-test-reports/20261022/ticket05a-compliance-engine.md)，实现 Netflix Timed Text Profile 硬校验（CPS≤20、行长 42/21、行数≤2、时长 0.833—7.0s、零时长/重叠/<2 帧空隙阻断）、SRT/WebVTT 生成、独立反解析器与四断言重解析对账、五维哈希真人签发（仅 VALIDATED 可签，禁构造 PUBLISHED）；模块 pytest 90 passed，全量 59 passed、全模块 340 passed；零模型，仅工程自测，AC-OUT 场景与正式 TC 仍 NOT_RUN。
+- 2026-10-22 工单05B 六段式全链路总装：[交付报告](08-test-reports/20261022/ticket05b-e2e-pipeline-integration.md)，把单位/格式、口语审校、平台合规三引擎接入正式应用（`/api/v1/units|oral|compliance`，统一可信会话与 503/403 fail-closed），并以 `tests/integration/test_end_to_end_pipeline.py` 串通 收料→源稿确认→初翻确认→文化检测→度量衡候选→口语审校→合规质检导出→五维哈希真人签发→产物获取；端到端 6 passed、`tests/ + code/backend/modules` 346 passed（基线 340）；零外部模型，文化环节以确定性规则路径替身，产物为进程内暂存，AC 场景与正式 TC 仍 NOT_RUN。
+- 2026-10-23 工单06 六段式全链路双向实测：[统一交付报告](08-test-reports/20261023-e2e-report/20261023-e2e-full-pipeline-report.md)。六环节成功/失败双向实测（ASR 切片守恒+150ms 尾片合并、锁词遗漏+乐观锁、文化 R-MX-TABOO-01 闭环、度量衡反验算+四类剧情硬锁、CPS 28→15.67 无损拆句、QC_FAILED 熔断+真人五维签发 100% 对账），附 7 份 JSON 回执、SRT/VTT 导出、8 张 Chrome 截图与两份 pytest 日志（79 + 281 passed）；零外部模型调用，隔离库执行；仅工程实测，业务/模型验收未执行。
 - 讨论/摘要/学习记录：工作区根work及知识索引。
 - 原型辅助检查：work/原型制作/检查记录/v1、v2；契约静态检查：work/三项锁定/检查记录。保留用例、结果和截图，已移出正式测试区。
 - 本轮旧→新路径、验证和历史路径解释：work/目录梳理/migration-map.json；不改历史会话中当时记录的事实。

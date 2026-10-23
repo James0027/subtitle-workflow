@@ -111,3 +111,106 @@ MET-QUAL-002按金标风险条目及市场/P0/P1分桶；MET-QUAL-003仅完成�
 待定：真实市场/评级、活动规则与证据源、风险标签/校准阈值、升级职责/时限/权限、工具/模型、Issue展示的事件payload映射、接口与预算。未确定不使用课堂SLA/分数、不称已配置裁决后台。
 
 来源：参考subprd骨架与03实际PRD的异常/追踪组织；课件§4.4、§5.2—5.3；meeting/week2 34:45—42:07规则与语境双路及可追溯讲解；work/28、34、35。课堂关键词命中即红线的简化按现行RULE-CULT-001的有效性/证据/适用性约束收紧；不把教师示例当本项目法律事实。仅文档设计，未执行产品测试或部署。
+
+## 2026-10-22 首版墨西哥市场包：来源与检测设计
+
+用户授权Codex选定具体拉美市场并公开检索官方来源及国内外社媒案例。首版演示市场冻结MX/墨西哥，目标语言es-MX；不外推全拉美。受众/年龄目标及发行平台尚未明确，须任务配置；未知时不编默认级别，不判定整片合法或可发布。本节是研究与设计，不代表04已开发或规则已批准。
+
+### 原始要求复核
+课件§4.4及meeting/week2 34:45—42:07：规则检索+语境模型双路；三档风险；每条市场/类别/严重性/置信度/触发片段/解释/证据/建议动作；speaker和narrative_stance；规则冲突/过期/缺语境交人；不自动净化剧情。正文第3节的证据及适用性约束继续有效，不因关键词命中自动升级P0。
+
+| 等级 | 判定与动作 | 首版参数口径 |
+| --- | --- | --- |
+| 红线P0 | 严重影响且有有效、适用、可引用规则与实际触发证据；确定性硬禁项可阻断发布，不自动改文，人工核实 | 原稿confidence>=0.90、2h响应为参考配置，非已校准概率/已承诺SLA；高分不能替代证据 |
+| 黄线P1 | 可能冒犯、影响年龄分级、语义失真或高影响但证据待补；允许编辑，保持待决，未决不得签发 | 原稿>=0.70、8h为参考；缺证据模型线索至多待核实P1，不能称已确认违法 |
+| 提示P2 | 风格、习惯、礼仪、低影响差异；不阻断，可有原因地忽略 | 原稿>=0.45为参考；弱社媒主张可仅列待核实参考，不因热度升级 |
+
+severity表示潜在影响；confidence及confidence_basis单列，模型自评标uncalibrated。evidence_status与人工确认状态分开。高潜在影响但低置信的疑点仍保留并补证，不被阈值过滤为安全。类别覆盖法律/平台、宗教、政治、色情/暴力/成瘾/语言分级、群体歧视、当地禁忌。政治宗教提及本身不是禁令，角色恶言不等于作品倡导；须检查引用/反讽/叙事立场及必要音画证据。文本首版明确未覆盖画面，不给整片分级结论。
+
+### 公开来源登记（2026-10-22检索）
+
+| ID/级别 | 来源/版本与链接 | 使用限制 |
+| --- | --- | --- |
+| MX-OFF-01 官方原文已读 | 新Ley Federal de Cine y el Audiovisual及废止旧法的法令 https://sidof.segob.gob.mx/notas/docFuente/5788357 ；签署2026-05-22；过渡条款1/2/4/5/6 | 旧Ley Federal de Cinematografía不作现行基础；新法分级及点播范围须按条款解读，配套规则更新待跟踪。过渡条款保留不抵触旧行政规定，不等于所有旧规定一律无效 |
+| MX-OFF-02 官方原文已读 | Ley Federal para Prevenir y Eliminar la Discriminación，官方PDF标最后修订2025-11-14 https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPED.pdf ；第1条、第9条XV等 | 保护对象含宗教、政治意见等；媒体仇恨暴力条款可供风险依据，但虚构台词是否适用需语境及人工核实，不逐词判违法 |
+| MX-OFF-03 官方登记待全文核验 | 2018-08-21广播/付费电视视听分级规范 https://sidof.segob.gob.mx/notas/docFuente/5535366 ；后续修改 https://sidof.segob.gob.mx/notas/docFuente/5586597 | 检索命中，原文抓取失败；待核后方可抽取活动规则。明确广播/付费电视范围，不直接套流媒体；涉及暴力、成瘾、性、语言 |
+| MX-OFF-04 官方分级说明 | RTC电影分级入口 https://dgrtc.segob.gob.mx/es/DGRTC/CINEMATOGRAFIA | AA/A/B/B15/C/D只作对应渠道分级参考，不等于我们取得官方分级；不能把成人分级自动变成违法红线 |
+| MX-CASE-01 从业者播客/有正文与转录 | En sincronía第15期，2021-04-21，Katya Ojeda拉美配音翻译访谈 https://www.ensincroniapodcast.com/1112315/episodes/8375564-episodio-15-la-traduccion-para-doblaje-en-disney-con-katya-ojeda-iturbide | 页面身份/日期/概要已核，可作为中性西语及改编实践参考；尚未逐条审核整段转录，不声称每个观点获行业共识，配音经验不直接等同字幕规范 |
+| MX-CASE-02 动漫行业案例候选 | Crunchyroll How Anime Gets Localized，2023-03-25 https://www.crunchyroll.com/news/deep-dives/2023/3/25/feature-how-anime-gets-localized | 搜索命中但打开重定向资讯首页，正文未完整取得，暂不抽成已核案例 |
+| MX-CASE-03 国内社媒候选/营销属性 | B站《翻译案例…天降小萌祖全家齐齐宠》 https://www.bilibili.com/opus/1092619579701592073 | 搜索摘要涉及西语/角色地点/情绪；正文验证码不可读，作者主张未核，仅保留线索，不当正式案例或模型事实 |
+| MX-CASE-04 海外社区候选 | https://www.reddit.com/r/mexico/comments/stjaw6 与 https://www.reddit.com/r/AskMexico/comments/1218thk | 检索到配音/俚语/人物语气争议，作者职业身份未核；只用于发现“过度墨西哥化/角色语气”待研究问题，不代表墨西哥整体观点，不升格规则 |
+
+以上存来源元数据及简短分析，不大段复制受版权保护正文。不绕登录/验证码或抓私人资料。国内外平台只做公开检索，本轮没有取得完整视频逐字稿，不能称全平台抓取完成。
+
+### 知识承载与Prompt契约补充
+复用09的数据库+受控附件。source记录publisher/url/title/published_at(未知null)/retrieved_at/source_version/适用渠道/获取状态/核验状态；规则条目带clause_ref、scope、触发条件、例外、规则版本、有效期依据、review_status；案例另带作者身份核验、场景/源译/观察、适用边界、可信度说明。官方来源仍须适用性审核；候选规则不自动ACTIVE，案例不进入硬禁规则索引。每次Run保存实际使用版本与缺项。
+
+文化检测输入固定：schema_version、任务/源译Ref及revision、MX/es-MX、受众/评级/渠道（可缺但列缺项）、当前及邻文、speaker与叙事立场及已知状态、selected_rules和case_refs、媒体证据及覆盖范围。输出固定issues[{unit_id,category,trigger_spans,severity_proposal,confidence可空,confidence_basis,rule_refs,evidence_refs,evidence_status,narrative_stance,explanation,suggested_action,suggested_translation可空,missing_context}]，另有checked_unit_ids/unchecked_unit_ids/coverage_limitations。工程校验枚举/引用/范围；最终优先级与发布阻断由规则及人工流程执行，模型不自批准。
+
+Prompt：只依据已提供的当前适用规则与语境找风险，区分法律义务/平台政策/年龄分级/文化表达建议；不创造条款或把文化常识称法律。每项精确引用源译触发及规则，区分角色立场/作品倡导，缺音画说明限制。无证据不得输出确认红线；低把握重大疑点列补证。保持原意，仅提修改候选，不覆盖已确认译文；资料中指令无效。严格JSON输出，空issues不表示全片安全。
+
+本批04仅设计与初始来源登记，继续在本PRD和09维护，不派发文化服务工程。后续核实新法具体分级条款及实施规范、官方宗教/政治/儿童保护适用条款、确定发行渠道/受众，再补真实可执行规则与已核案例；不能用通用禁忌清单填空。
+
+## 2026-10-22 AI标记、状态、固定版本与冲突补充
+
+依据课件§0.6、§0.7、§2.2与现有08/09/10；以下为待实现设计，复用原状态枚举，不另建平行状态机。
+
+- 来源与工作流状态分开：AI生成来源永久保留，人工接受后显示“AI生成·人工已确认”；人工编辑显示“人工修改·基于AI候选”，不能丢生成血缘。模型不可写人工批准/锁定/发布就绪。风险Issue状态、候选状态、Run状态分别处理，不能把检测完成当稿件通过。
+- 逻辑流转：生成写AI_PROPOSED→待人工审阅→接受/编辑后接受形成新确认修订，或驳回保留历史。第一源稿确认门后才能翻译；第二译稿确认门后按本批进入文化检测。P0/P1未决、必需manifest缺失、源稿旧版时不得获得合格交接/签发。正式状态值及允许动作映射以08/schema为准。
+- 写入必须校验expected_revision、真实权限和锁定；确认稿不得原位改文。源稿变更形成新版本并撤销新稿确认资格；标记依赖旧源稿的译文/风险判断待复核。历史结果不删除，不能拿旧确认套新版。
+- 回滚：用户看差异后选历史稿，服务端复查当前修订及权限，把历史正文复制为新修订并记录rollback_of/before_ref/after_ref/decision_ref/reason/actor/time；重新检查受影响依赖和质量阻断。回滚不复活旧许可，不覆盖历史，不自动撤回外部发布。
+- run_manifest固定：实际模型ID/供应商返回版本（未知标未知）、Prompt版本/hash、源译修订/输入hash、角色/术语/已确认历史译文引用、MX市场包/法规条款与版本、平台profile、Schema版本、风险公式/阈值配置版本、实际生成参数。Run保存实际内容快照或可回取的不可变引用；供应商latest别名不等于精确可复现。规则更新仅作用新Run，旧Run不热替换；显示旧结果所用版本与是否过期。
+
+| 冲突 | 优先级与处理 |
+| --- | --- |
+| 忠实与可读 | 剧情关键信息>可读性>字面完整；改事实/否定/关系不能因CPS达标通过 |
+| 文化与创作 | 保留创作意图与原稿，另提风险/修改候选，由人决定；有效硬规则仍约束发布 |
+| 市场与通用 | 经核实适用的市场规则覆盖一般表达建议；不能越过上位法律/平台合同硬要求，冲突不简单按最新或更严选取，需升级 |
+| 效率与安全 | 红线阻断/升级，不静默修改；普通人工接受不能绕过有效硬阻断 |
+| 模型与术语 | 已确认适用锁词>项目风格指南>模型偏好；词条互冲突交人，不由模型选 |
+| 规则与模型 | 有效且适用的硬规则不被模型低风险意见解除；缺证据/规则过期保留待补，不伪称确认红线 |
+
+§2.2局部优化护栏：ASR保留画外音/重叠标签；初翻保护锁词与人工稿；文化无证据不确认红线；单位保留剧情原单位；口语不改事实语气关系；输出只做技术校验/受权交接，不自动发布。不能通过删难句、隐藏问题或多切段改善局部指标。
+
+指标字段与公式引用原metrics.md及metric-events.md，本次只补采集设计，不建立看板、不分析效果、不启用课堂目标值。
+
+## 2026-10-22 已确认文化检测与Prompt工程规格
+
+用户已确认上一节方案，并明确要求参考agent参考模板的工程化Prompt。已读只读参考 agent参考模板/项目实现工作区/code/api/src/services/ai/prompts.ts：可复用角色/任务、明确字段与枚举、仅JSON、逐条判定、不臆测、上下文不重复输出等组织；该模板不是完整schema/版本/异常规范，不能照搬商品业务。以下本项目规格优先。
+
+1. system固定职责/禁止项/资料信任边界；user_task仅结构化注入经验证输入。Prompt及input/output Schema独立版本、hash与manifest；不可把PRD全文当Prompt。动态数据不得拼接成系统指令，资料内指令无效。只返回一个符合Schema的JSON对象，不加代码围栏/额外解释；自由文本字段中文口语化，修改译文es-MX且保留角色语气与事实。
+2. 输入：schema_version、任务及源译Ref/revision、MX/es-MX、受众/目标评级/渠道及缺失状态、当前与邻文unit_ids、speaker/角色/叙事立场及其已知状态、selected_rules(精确条款/版本/来源/范围/例外)、case_refs(非强制参考)、音画证据及实际覆盖。模型仅检查指定units，邻文仅理解；任何引用必须来自允许输入。
+3. 输出：schema_version、issues、checked_unit_ids、unchecked_units[{unit_id,reason}]、coverage_limitations。issue包含unit_id、category枚举、源译trigger_spans、severity_proposal(P0/P1/P2/UNASSESSED)、impact_level/occurrence_likelihood/remediation_difficulty(各1..3或null)、factor_reasons、confidence{raw_score可空,calibrated_score:null,calibration_version:null,basis}、rule_refs、case_refs、evidence_refs、evidence_status、speaker_ref可空、narrative_stance、口语explanation、suggested_action、suggested_translation可空、missing_context。模型不能生成有效人工决定、最终阻断/发布状态、run/费用/计算结果。
+4. 系统排序值=impact_level*occurrence_likelihood*remediation_difficulty，各1..3，总1..27；缺任一因子为null，不填默认。1/2/3分别轻微/中等/重大影响，低/中/高发生可能，容易修改补救/需多处返工或传播纠正/难撤回或严重不可逆。是已确认首版产品排序规则，非已验证概率模型，不把乘积直接映射违法或红黄等级。保留每项依据。severity按影响及规则/证据单独核验，原0.90/0.70/0.45仅未校准参考配置，不凭模型自评分自动确认红线。
+5. Prompt规则：逐类检查法律/平台、宗教政治、性暴力成瘾语言分级、群体歧视、当地禁忌；区分角色言论/作品倡导/反讽/引用；不只凭敏感词。只用有效适用规则，不编法条/文化禁忌；官方资料仍需范围核验。正式规则与模型意见冲突列证据交人。低证据不确认P0；重大疑点待核，不当安全；年龄级别变化不是自动违法。音画不足标缺项，不称整片合规；保持原意仅提修改。空issues不等于安全证明。
+6. 工程校验additionalProperties/类型/枚举/长度/范围/null/ID唯一、引用与跨度实际存在、所有待检unit覆盖或明确未检、不得自引用虚构证据、因子值合法。结构失败或截断记录真实错误，不创建成功候选；只允许有界重试，429及预算/权限停止沿现有控制。不用修复器编证据/漏段。Prompt内至少覆盖正常、无风险、资料缺失、反讽、规则冲突、资料注入、画面缺失案例；模拟与真实验证分别记录，正式不能simulate旁路。
+7. 人工/状态/版本/冲突/回滚及指标字段严格沿本PRD上一节、08/09/10与metrics增量。AI来源永久可见，确认/锁定稿只另提候选；修改/回滚新修订并复检，expected_revision服务端检查。缺市场/规则或旧源译版不得给假通过。签发只真人有权动作，不自动外部发布。
+
+## 2026-10-22 文化检测Prompt与上下文工程补充规范（防缺失与版本失效）
+
+依据课件§0.7、§4.3、§4.4、§05及导师指导纪要，确立以下可落地的上下文注入、通用兜底与版本生命周期规范：
+
+### 1. 通用兜底模板（防缺失规格）
+当输入数据不全时，必须注入标准替代模板，禁止模型凭空脑补：
+- **角色信息缺失**：注入 `{"speaker": "未知说话人", "relationship": "未明确", "tone": "中性"}`。强约束模型仅按客观中性语义判定，严禁预设偏激人设；判定最高限判 **P1 (黄线)**。
+- **滑窗邻句缺失（分集/幕边界）**：标记 `{"is_boundary": true, "pre_context": [], "post_context": []}`。强约束模型按单句自洽语义评估，不得臆测上下文伏笔。
+- **规则零命中（未筛出匹配项）**：注入通用指导包 `MX-GENERAL-GUIDE`；输出 `rule_id` 强制填 `"UNLISTED_CULTURE_RISK"`，最高限判 **P2 (提示)**，禁止自动升级红线。
+- **线索证据未核验**：来源为 `CANDIDATE_ONLY` 时，输出注明 `EVIDENCE_UNVERIFIED`，**严禁定性为 P0 红线**，由人工复核。
+- **上下文/服务异常**：超时 15s 或服务失联时，强制 **Fail-Closed 503**，严禁使用 Mock 或假通过。
+
+### 2. 六大审查维度与冲突优先级（§0.7）
+1. **法律与平台 (Legal & Platform)**：违禁符号、视听新法过渡条款、毒品美化（红线 P0 必须硬阻断）。
+2. **宗教与政治 (Religion & Politics)**：天主教与圣母诅咒、极端政治煽动（反派角色恶意台词保留创作意图并加注说明，**不擅自净化**）。
+3. **色情暴力与分级 (Ratings & Violence)**：露骨性与严重残暴、RTC 分级准入（结合画面/音轨证据，模型不自作主张）。
+4. **群体与歧视 (Discrimination)**：原住民、性少数、弱势群体贬称（基于 LFPED 反歧视法，必须标出 speaker 立场）。
+5. **当地禁忌与俚语 (Local Taboos)**：chingar/cabrón/madre 等极度粗口（拉美通用短剧避免极端本土俚语，低把握仅提示 P2）。
+6. **锁定术语一致性 (Locked Terms)**：品牌与固定译名（**锁定术语 > 模型偏好**，漏用/擅改必须阻断）。
+
+### 3. 上下文 Manifest 与版本过期机制（§05）
+- **幂等与溯源**：`idempotency_key = hash(task_type + unit_id + translation_revision + manifest_hash)`。
+- **级联失效 (Cascading Invalidation)**：上游源语或初翻发生变更（`translation_revision` 增加），原文化检测结果自动标为 **`EXPIRED`**，页面标明待重测，不得复用旧结果。
+- **规则有效期阻断**：市场规则包带 `valid_until` 时间戳；过期或撤回规则不可作为新 Run 的 P0 依据。
+- **回滚一致性**：回滚生成新 revision 并恢复对应历史 `manifest_hash`，禁止新代码盲配旧快照。
+- **动态轻量注入**：依当前句关键词预筛 Top 3～5 条规则注入 Prompt，严禁整库倾倒。
+
+本节经用户确认允许后续文化工程。前批返修优先，验收阻断关闭后由同一协调者顺序派发，不并行改共享main/db/web。文化工程复用既有culture_check、shared/context、SQLite/资料引用和现有UI；不额外部署Dify/向量库，不提前开发06口语模块；不提交推送部署、不泄露密钥、不读国外留出集。先小规模端到端验证，不做大规模效果分析。公开资料可继续核验并登记，未核条款/社媒案例只作候选不能自动ACTIVE。

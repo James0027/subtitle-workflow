@@ -2,6 +2,8 @@
 
 版本：v0.2｜日期：2026-10-21｜状态：PROPOSED，待技术/业务基线冻结；不是已实现API/生产DDL。
 
+2026-10-21软件方向已确定，分工/实现边界见[工程交接](../07-delivery-plans/antigravity-source-engineering-handoff.md)。这不代表本文全部序列化、AI策略或真实业务条件已冻结。Antigravity实现工程接口；用户与Codex确认AI内容后再接入。
+
 > 上游（我引用）：[落地方案](../07-delivery-plans/source-release-solution.md)；[schema](schema.md)；[规则](rule-registry.md)；[事件](metric-events.md)；[01/02/07/08/09/10子PRD索引](../05-prd/README.md)。
 > 下游（引用我）：[实施计划](../07-delivery-plans/main-delivery-plan-source-release.md)；[正式TC](../06-testcase/tc-main-subtitle-workflow.md)。
 

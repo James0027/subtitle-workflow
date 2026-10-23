@@ -149,3 +149,26 @@
 [首批方案](../07-delivery-plans/source-release-solution.md)、[技术契约草案](source-release-contract.md)、[实施计划草案](../07-delivery-plans/main-delivery-plan-source-release.md)、[正式TC设计](../06-testcase/tc-main-subtitle-workflow.md)。
 
 首批仅收料/任务→转写、核对或对齐→人工源稿审阅→源语导出；174条TC设计全部NOT_RUN，8项实现任务全部阻塞。技术方案及契约是PROPOSED，数据字段仍以schema为权威；采纳扩展须在T0.1先同步权威定义。真实样本、权限、模型/阈值和预算仍待确认；多语模块未纳入本批实现。不把静态检查或合成配方当业务验收。
+
+## 2026-10-22 首版预留字段与效果评价映射
+
+用户要求先设置数据口径/字段，不开展效果分析。沿用本文metric_id、窗口与去重定义及metric-events事件，不另立同义指标。下表是采集契约增量，尚不代表数据库列/事件采集实现；工程映射到schema现有实体/JSON payload，新增前核现有字段，避免重复。
+
+| 指标维度 | 计算/引用 | 必需原始信息 |
+| --- | --- | --- |
+| ASR准确/说话人/边界 | WER=(替换+删除+插入)/参考词数；speaker error按冻结评价协议；边界绝对误差P95 | evaluation_batch_id、gold_version、参考文本/词数、识别文本、分词工具版本、参考/预测speaker与跨度、参考/预测起止、timing_precision、媒体范围及重叠标签；缺参考不计算 |
+| 初翻忠实 | QE/COMET真实评估结果及数字/否定/实体检查，见MET-TR | source_ref/revision、candidate_ref、评估模型/版本/模式、score可空、参考译文引用(方法需要时)、check_type/result/source_span/target_span；自评不冒充独立QE |
+| 术语召回 | 正确使用锁词出现数/适用出现数 | occurrence_id、term_id/version、scope、required/allowed_forms、actual_translation、结果及人工裁决；按出现次数非词条数 |
+| 文化召回 | P0/P1分别TP/(TP+FN) | gold_item_id、金标类别/等级/跨度/版本、预测issue_id、matching_protocol_version、匹配结果TP/FP/FN、market；无金标为null |
+| 文化提示精确 | 确认有效/全部展示；未裁决单列 | issue_id、suggestion.shown/event_id/time、人工confirmed/refuted/unresolved、reason、decision_ref、severity及模型/规则版本；有效性≠点击接受 |
+| 证据完整与有效 | 完整提示/全部提示；引用有效独立统计 | market、trigger_spans、rule_ref/version、explanation、evidence_refs、access/validity/scope_check、missing/not_applicable_reason；有URL不代表有效 |
+| 接受与回滚 | 依MET-REV有效接受168小时观察；回滚按原候选追踪 | candidate_id/首次展示、accept_at、actor、edit/before/after_ref、revert_at/reason、confirmed_downstream_error、as_of及观察完整性；刷新不重计 |
+| 可读/口语 | CPS=字符数/(duration_ms/1000)，超限率、断句错误、编辑距离 | 文本版本、字符计数规则、实际时间精度、profile/阈值版本、人工断句标签、前后稿及规范化算法；粗切片时间不假作准确句级CPS |
+| 效率与成本 | 延迟P50/P95、调用/token、净人工分钟/TAT、单位合格版本成本 | task/run/attempt/step、queued/start/end_at、人工activity区间/种类、input/output_tokens、usage_source、model、真实账单/币种/费率/分摊版本、合格时长；未知费用null非0 |
+| 稳定与治理 | schema pass/失败/重试/幂等、回滚、审计覆盖和越权成功 | validation_id/kind/attempt/result/errors、request/idempotency_key、状态转换前后/拒绝原因、actor/role、expected/current_revision、manifest_hash、artifact/input/output_hash；模型JSON校验与导出硬校验分报 |
+
+所有评价记录保留project/task/run/attempt、输入输出ref/revision、源/目标语言、market、平台/题材（已知时）、评估批次、event_at/received_at、评估/规则/公式版本。风险severity、confidence.raw_score/calibrated_score/calibration_version、证据充分性分轴；没有校准时calibrated_score=null。
+
+分级计算所需字段先设计impact_level、occurrence_likelihood及依据、reversibility及依据、confidence及依据、rule_match/applicability/evidence_validity、risk_policy_version。原课件“影响×概率×可逆性”尚未给数值尺度/方向/映射；必须先冻结公式配置再由工程计算，不把未定义乘积当已验证模型，不合并severity与confidence。
+
+指标报告尚未运行；课堂阈值保持参考。零分母/无金标/未满观察窗为null或待观察，分别记录缺失；失败任务和未检查范围不能从总量中消失。暂不计算收益、不声称达标。
